@@ -1,0 +1,182 @@
+/* CSS Custom Properties for Design System */
+
+:root {
+  /* Base colors */
+  --background: #ffffff;
+  --foreground: #111827;
+
+  /* Cards & containers */
+  --card: #ffffff;
+  --card-foreground: #111827;
+  --popover: #ffffff;
+  --popover-foreground: #111827;
+
+  /* Status / process */
+  --primary: #2563eb;              /* Blue → progress / current step */
+  --primary-foreground: #ffffff;
+  --success: #16a34a;              /* Green → completed */
+  --danger: #dc2626;               /* Red → urgent/destructive */
+  --warning: #ea580c;              /* Orange → archive/hazardous */
+  
+  /* Neutrals */
+  --secondary: #f3f4f6;
+  --secondary-foreground: #111827;
+  --muted: #f4f4f4;
+  --muted-foreground: #6b7280;
+  --accent: #e5e7eb;
+  --accent-foreground: #111827;
+
+  /* Borders / inputs */
+  --border: #e5e7eb;
+  --input: #f3f4f6;
+
+  /* Sidebar */
+  --sidebar: #fafafa;
+  --sidebar-foreground: #111827;
+  --sidebar-primary: #2563eb;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f3f4f6;
+  --sidebar-accent-foreground: #374151;
+
+  /* Misc */
+  --ring: #2563eb;
+  --radius: 0.625rem;
+  --process_buttons: #2563eb;
+  --in-progress: #dbeafe;
+  --in-progress-foreground: #1d4ed8;
+
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Font sizes (with clamp for responsive scaling) */
+  --font-size-body: clamp(0.875rem, 2vw, 1rem);        /* 14–16px */
+  --font-size-sm: clamp(1rem, 2.5vw, 1.125rem);        /* 16–18px */
+  --font-size-md: clamp(1.125rem, 3vw, 1.25rem);       /* 18–20px */
+  --font-size-lg: clamp(1.25rem, 4vw, 1.5rem);         /* 20–24px */
+  --font-size-xl: clamp(1.5rem, 5vw, 2rem);            /* 24–32px */
+
+  /* Font weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+}
+
+.dark {
+  /* Base */
+  --background: #0f172a;          /* Navy dark blue */
+  --foreground: #f9fafb;
+
+  /* Cards */
+  --card: #1e293b;                /* Dark slate */
+  --card-foreground: #f9fafb;
+  --popover: #1e293b;
+  --popover-foreground: #f9fafb;
+
+  /* Status / process */
+  --primary: #3b82f6;             /* Brighter blue for contrast */
+  --primary-foreground: #f9fafb;
+  --success: #22c55e;             /* Softer green */
+  --danger: #ef4444;              /* Red */
+  --warning: #f97316;             /* Orange */
+  
+  /* Neutrals */
+  --secondary: #334155;
+  --secondary-foreground: #f9fafb;
+  --muted: #1e293b;
+  --muted-foreground: #9ca3af;
+  --accent: #475569;
+  --accent-foreground: #f9fafb;
+
+  /* Borders / inputs */
+  --border: #334155;
+  --input: #334155;
+
+  /* Sidebar */
+  --sidebar: #1e293b;
+  --sidebar-foreground: #f9fafb;
+  --sidebar-primary: #3b82f6;
+  --sidebar-primary-foreground: #f9fafb;
+  --sidebar-accent: #334155;
+  --sidebar-accent-foreground: #f9fafb;
+
+  /* Misc */
+  --ring: #3b82f6;
+}
+
+/* Base styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+}
+
+/* Typography */
+h1 {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.5;
+  margin: 0;
+}
+
+h2 {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.5;
+  margin: 0;
+}
+
+h3 {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.5;
+  margin: 0;
+}
+
+h4 {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.5;
+  margin: 0;
+}
+
+p {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-normal);
+  line-height: 1.5;
+  margin: 0;
+}
+
+label {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.5;
+}
+
+button {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.5;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+input, textarea, select {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-normal);
+  line-height: 1.5;
+  font-family: inherit;
+}
+
+/* Focus styles */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
