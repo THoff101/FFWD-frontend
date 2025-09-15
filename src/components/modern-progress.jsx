@@ -1,12 +1,12 @@
 import styled from "styled-components";
 import { Check, Clock, AlertCircle } from "lucide-react";
 
-// Styled Components for ModernProgress
+// Responsive styled components with mobile-first approach
 const ProgressContainer = styled.div`
   width: 100%;
-  background-color: white;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 1.5rem;
+  background-color: var(--card);
+  border-bottom: 1px solid var(--border);
+  padding: clamp(0.75rem, 3vw, 1.5rem);
 `;
 
 const ProgressWrapper = styled.div`
@@ -19,24 +19,35 @@ const ProgressContent = styled.div`
   align-items: center;
   justify-content: space-between;
   position: relative;
+  
+  /* Stack vertically on very small screens */
+  @media (max-width: 480px) {
+    flex-direction: column;
+    gap: 1rem;
+  }
 `;
 
 const ProgressLine = styled.div`
   position: absolute;
-  top: 1.5rem;
-  left: 0;
-  width: 100%;
-  height: 0.25rem;
-  background-color: #e5e7eb;
+  top: clamp(1.25rem, 4vw, 1.5rem);
+  left: clamp(1.5rem, 6vw, 2rem);
+  right: clamp(1.5rem, 6vw, 2rem);
+  height: clamp(0.125rem, 0.5vw, 0.25rem);
+  background-color: var(--border);
   border-radius: 9999px;
+  
+  @media (max-width: 480px) {
+    display: none;
+  }
 `;
 
-const ProgressFill = styled.div<{ width: string }>`
+const ProgressFill = styled.div`
   height: 100%;
-  background: linear-gradient(to right, #3b82f6, #2563eb);
+  background: linear-gradient(to right, var(--primary), var(--primary));
   border-radius: 9999px;
   transition: all 0.5s ease-out;
   width: ${props => props.width};
+  opacity: 0.8;
 `;
 
 const StepContainer = styled.div`
@@ -45,12 +56,21 @@ const StepContainer = styled.div`
   align-items: center;
   position: relative;
   z-index: 10;
-  max-width: 8rem;
+  max-width: clamp(6rem, 15vw, 8rem);
+  
+  @media (max-width: 480px) {
+    flex-direction: row;
+    max-width: none;
+    width: 100%;
+    gap: 1rem;
+    align-items: center;
+    justify-content: flex-start;
+  }
 `;
 
-const StepCircle = styled.div<{ $status: string }>`
-  width: 3rem;
-  height: 3rem;
+const StepCircle = styled.div`
+  width: clamp(2.5rem, 6vw, 3rem);
+  height: clamp(2.5rem, 6vw, 3rem);
   border-radius: 50%;
   border: 2px solid;
   display: flex;
@@ -58,7 +78,7 @@ const StepCircle = styled.div<{ $status: string }>`
   justify-content: center;
   transition: all 0.3s;
   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  background-color: white;
+  background-color: var(--card);
   
   ${props => {
     switch (props.$status) {
@@ -71,87 +91,95 @@ const StepCircle = styled.div<{ $status: string }>`
       case 'current':
         return `
           background-color: #dbeafe;
-          border-color: #3b82f6;
-          color: #1d4ed8;
-          box-shadow: 0 0 0 4px #dbeafe, 0 10px 15px -3px rgb(0 0 0 / 0.1);
-          transform: scale(1.1);
+          border-color: var(--primary);
+          color: var(--primary);
+          box-shadow: 0 0 0 clamp(2px, 1vw, 4px) #dbeafe, 0 4px 8px -2px rgba(0, 0, 0, 0.1);
+          transform: scale(1.05);
+          
+          @media (min-width: 768px) {
+            transform: scale(1.1);
+          }
         `;
       default:
         return `
-          background-color: #f3f4f6;
-          border-color: #d1d5db;
-          color: #6b7280;
+          background-color: var(--muted);
+          border-color: var(--border);
+          color: var(--muted-foreground);
         `;
     }
   }}
 `;
 
-const StepIconContainer = styled.div<{ $status: string }>`
+const StepIconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   
   span {
-    font-size: 0.875rem;
+    font-size: clamp(0.75rem, 2vw, 0.875rem);
     font-weight: ${props => props.$status === 'current' ? '600' : '500'};
   }
 `;
 
 const CheckIcon = styled(Check)`
-  width: 1rem;
-  height: 1rem;
+  width: clamp(0.875rem, 2.5vw, 1rem);
+  height: clamp(0.875rem, 2.5vw, 1rem);
   color: #16a34a;
 `;
 
 const ClockIcon = styled(Clock)`
-  width: 1rem;
-  height: 1rem;
-  color: #2563eb;
+  width: clamp(0.875rem, 2.5vw, 1rem);
+  height: clamp(0.875rem, 2.5vw, 1rem);
+  color: var(--primary);
 `;
 
 const StepLabelContainer = styled.div`
-  margin-top: 0.75rem;
+  margin-top: clamp(0.5rem, 2vw, 0.75rem);
   text-align: center;
+  
+  @media (max-width: 480px) {
+    margin-top: 0;
+    text-align: left;
+    flex: 1;
+  }
 `;
 
-const StepNumber = styled.p<{ $status: string }>`
-  font-size: 0.75rem;
-  font-weight: 500;
+const StepNumber = styled.p`
+  font-size: clamp(0.625rem, 1.5vw, 0.75rem);
   margin: 0;
-  color: ${props => props.$status === 'current' ? '#2563eb' : '#6b7280'};
+  color: ${props => props.$status === 'current' ? 'var(--primary)' : 'var(--muted-foreground)'};
 `;
 
-const StepLabel = styled.p<{ $status: string }>`
-  font-size: 0.875rem;
-  margin: 0.25rem 0 0 0;
+const StepLabel = styled.p`
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
+  margin: clamp(0.125rem, 0.5vw, 0.25rem) 0 0 0;
   line-height: 1.25;
   color: ${props => {
     switch (props.$status) {
       case 'current':
-        return '#111827';
+        return 'var(--foreground)';
       case 'completed':
-        return '#374151';
+        return 'var(--foreground)';
       default:
-        return '#6b7280';
+        return 'var(--muted-foreground)';
     }
   }};
   font-weight: ${props => props.$status === 'current' ? '600' : '400'};
 `;
 
-// Styled Components for TrackingProgress
+// Tracking Progress Components (for job details pages)
 const TrackingContainer = styled.div`
-  background-color: white;
+  background-color: var(--card);
   border-radius: 0.75rem;
-  border: 1px solid #e5e7eb;
-  padding: 1.5rem;
+  border: 1px solid var(--border);
+  padding: clamp(1rem, 3vw, 1.5rem);
   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 `;
 
 const TrackingTitle = styled.h3`
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #111827;
-  margin: 0 0 1.5rem 0;
+  font-size: clamp(1rem, 3vw, 1.125rem);
+  color: var(--foreground);
+  margin: 0 0 clamp(1rem, 3vw, 1.5rem) 0;
 `;
 
 const TrackingContent = styled.div`
@@ -160,40 +188,56 @@ const TrackingContent = styled.div`
 
 const TrackingProgressLine = styled.div`
   position: absolute;
-  top: 1.5rem;
-  left: 0;
-  width: 100%;
-  height: 0.25rem;
-  background-color: #e5e7eb;
+  top: clamp(1.25rem, 4vw, 1.5rem);
+  left: clamp(1rem, 4vw, 1.5rem);
+  right: clamp(1rem, 4vw, 1.5rem);
+  height: clamp(0.125rem, 0.5vw, 0.25rem);
+  background-color: var(--border);
   border-radius: 9999px;
+  
+  @media (max-width: 640px) {
+    display: none;
+  }
 `;
 
-const TrackingProgressFill = styled.div<{ width: string }>`
+const TrackingProgressFill = styled.div`
   height: 100%;
-  background: linear-gradient(to right, #3b82f6, #2563eb);
+  background: linear-gradient(to right, var(--primary), var(--primary));
   border-radius: 9999px;
   transition: all 0.5s ease-out;
   width: ${props => props.width};
+  opacity: 0.8;
 `;
 
 const StagesContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(clamp(4rem, 12vw, 5rem), 1fr));
+  gap: clamp(0.5rem, 2vw, 1rem);
   position: relative;
   z-index: 10;
+  
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
 `;
 
 const StageContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 5rem;
+  
+  @media (max-width: 640px) {
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+    justify-content: flex-start;
+  }
 `;
 
-const StageCircle = styled.div<{ $status: string }>`
-  width: 3rem;
-  height: 3rem;
+const StageCircle = styled.div`
+  width: clamp(2.5rem, 6vw, 3rem);
+  height: clamp(2.5rem, 6vw, 3rem);
   border-radius: 50%;
   border: 2px solid;
   display: flex;
@@ -201,7 +245,7 @@ const StageCircle = styled.div<{ $status: string }>`
   justify-content: center;
   transition: all 0.3s;
   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  background-color: white;
+  background-color: var(--card);
   
   ${props => {
     switch (props.$status) {
@@ -214,16 +258,16 @@ const StageCircle = styled.div<{ $status: string }>`
       case 'current':
         return `
           background-color: #dbeafe;
-          border-color: #3b82f6;
-          color: #1d4ed8;
-          box-shadow: 0 0 0 4px #dbeafe, 0 10px 15px -3px rgb(0 0 0 / 0.1);
-          transform: scale(1.1);
+          border-color: var(--primary);
+          color: var(--primary);
+          box-shadow: 0 0 0 clamp(2px, 1vw, 4px) #dbeafe, 0 4px 8px -2px rgba(0, 0, 0, 0.1);
+          transform: scale(1.05);
         `;
       case 'external':
         return `
-          background-color: #f3f4f6;
-          border-color: #9ca3af;
-          color: #4b5563;
+          background-color: var(--muted);
+          border-color: var(--muted-foreground);
+          color: var(--muted-foreground);
         `;
       case 'issue':
         return `
@@ -233,9 +277,9 @@ const StageCircle = styled.div<{ $status: string }>`
         `;
       default:
         return `
-          background-color: #fafafa;
-          border-color: #d1d5db;
-          color: #6b7280;
+          background-color: var(--card);
+          border-color: var(--border);
+          color: var(--muted-foreground);
         `;
     }
   }}
@@ -247,68 +291,78 @@ const StageIconContainer = styled.div`
   justify-content: center;
   
   span {
-    font-size: 0.875rem;
+    font-size: clamp(0.75rem, 2vw, 0.875rem);
     font-weight: 500;
   }
 `;
 
 const StageCheckIcon = styled(Check)`
-  width: 1rem;
-  height: 1rem;
+  width: clamp(0.875rem, 2.5vw, 1rem);
+  height: clamp(0.875rem, 2.5vw, 1rem);
   color: #16a34a;
 `;
 
 const StageClockIcon = styled(Clock)`
-  width: 1rem;
-  height: 1rem;
-  color: #2563eb;
+  width: clamp(0.875rem, 2.5vw, 1rem);
+  height: clamp(0.875rem, 2.5vw, 1rem);
+  color: var(--primary);
 `;
 
 const StageAlertIcon = styled(AlertCircle)`
-  width: 1rem;
-  height: 1rem;
+  width: clamp(0.875rem, 2.5vw, 1rem);
+  height: clamp(0.875rem, 2.5vw, 1rem);
   color: #dc2626;
 `;
 
 const StageLabelContainer = styled.div`
-  margin-top: 0.75rem;
+  margin-top: clamp(0.5rem, 2vw, 0.75rem);
   text-align: center;
+  
+  @media (max-width: 640px) {
+    margin-top: 0;
+    text-align: left;
+    flex: 1;
+  }
 `;
 
-const StageLabel = styled.p<{ $status: string }>`
-  font-size: 0.75rem;
-  font-weight: 500;
+const StageLabel = styled.p`
+  font-size: clamp(0.625rem, 2vw, 0.75rem);
   line-height: 1.25;
   margin: 0;
   color: ${props => {
     switch (props.$status) {
       case 'current':
-        return '#2563eb';
+        return 'var(--primary)';
       case 'completed':
         return '#16a34a';
       case 'issue':
         return '#dc2626';
       default:
-        return '#6b7280';
+        return 'var(--muted-foreground)';
     }
   }};
+  font-weight: ${props => props.$status === 'current' ? '600' : '500'};
 `;
 
-interface ModernProgressProps {
-  currentStep: number;
-  totalSteps: number;
-  stepLabels: string[];
-  variant?: 'creation' | 'tracking';
-}
+const StageDescription = styled.p`
+  font-size: clamp(0.625rem, 1.5vw, 0.75rem);
+  color: var(--muted-foreground);
+  margin: 0.25rem 0 0 0;
+  line-height: 1.2;
+  
+  @media (max-width: 640px) {
+    margin-top: 0.125rem;
+  }
+`;
 
-export function ModernProgress({ currentStep, totalSteps, stepLabels, variant = 'creation' }: ModernProgressProps) {
-  const getStepStatus = (stepNumber: number) => {
+export function ModernProgress({ currentStep, totalSteps, stepLabels, variant = 'creation' }) {
+  const getStepStatus = (stepNumber) => {
     if (stepNumber < currentStep) return 'completed';
     if (stepNumber === currentStep) return 'current';
     return 'pending';
   };
 
-  const getStepIcon = (status: string, stepNumber: number) => {
+  const getStepIcon = (status, stepNumber) => {
     switch (status) {
       case 'completed':
         return <CheckIcon />;
@@ -319,13 +373,15 @@ export function ModernProgress({ currentStep, totalSteps, stepLabels, variant = 
     }
   };
 
+  const progressWidth = totalSteps > 1 ? `${((currentStep - 1) / (totalSteps - 1)) * 100}%` : '0%';
+
   return (
     <ProgressContainer>
       <ProgressWrapper>
         <ProgressContent>
           {/* Progress line */}
           <ProgressLine>
-            <ProgressFill width={`${((currentStep - 1) / (totalSteps - 1)) * 100}%`} />
+            <ProgressFill width={progressWidth} />
           </ProgressLine>
           
           {/* Steps */}
@@ -360,17 +416,8 @@ export function ModernProgress({ currentStep, totalSteps, stepLabels, variant = 
   );
 }
 
-interface TrackingProgressProps {
-  currentStage: number;
-  stages: Array<{
-    name: string;
-    status: 'completed' | 'current' | 'pending' | 'external' | 'issue';
-    description?: string;
-  }>;
-}
-
-export function TrackingProgress({ currentStage, stages }: TrackingProgressProps) {
-  const getStageIcon = (status: string, index: number) => {
+export function TrackingProgress({ currentStage, stages }) {
+  const getStageIcon = (status, index) => {
     switch (status) {
       case 'completed':
         return <StageCheckIcon />;
@@ -383,6 +430,9 @@ export function TrackingProgress({ currentStage, stages }: TrackingProgressProps
     }
   };
 
+  const completedStages = stages.filter(stage => stage.status === 'completed').length;
+  const progressWidth = stages.length > 1 ? `${(completedStages / (stages.length - 1)) * 100}%` : '0%';
+
   return (
     <TrackingContainer>
       <TrackingTitle>Progress Timeline</TrackingTitle>
@@ -390,9 +440,7 @@ export function TrackingProgress({ currentStage, stages }: TrackingProgressProps
       <TrackingContent>
         {/* Progress line */}
         <TrackingProgressLine>
-          <TrackingProgressFill 
-            width={`${(stages.filter((_, index) => index < currentStage).length / (stages.length - 1)) * 100}%`}
-          />
+          <TrackingProgressFill width={progressWidth} />
         </TrackingProgressLine>
         
         {/* Stages */}
@@ -411,6 +459,11 @@ export function TrackingProgress({ currentStage, stages }: TrackingProgressProps
                 <StageLabel $status={stage.status}>
                   {stage.name}
                 </StageLabel>
+                {stage.description && (
+                  <StageDescription>
+                    {stage.description}
+                  </StageDescription>
+                )}
               </StageLabelContainer>
             </StageContainer>
           ))}

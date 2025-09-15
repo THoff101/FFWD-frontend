@@ -1,9 +1,12 @@
+import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { ModernSidebar } from "./modern-sidebar";
 import { TrackingProgress } from "./modern-progress";
+import { useConsolidation } from "../contexts/consolidation-context";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
+import { useState, useEffect } from "react";
+import { fetchJobById } from "../data/mock-jobs";
 import { 
   ArrowLeft,
   Play, 
@@ -17,128 +20,131 @@ import {
   History,
   ExternalLink
 } from "lucide-react";
+import { jobStages } from "../data/job-stages";
 
-// Styled Components
+// Responsive styled components with mobile-first approach
 const PageContainer = styled.div`
   min-height: 100vh;
-  background-color: #f9fafb;
-  display: flex;
-`;
-
-const MainContent = styled.div`
-  flex: 1;
+  background-color: var(--background);
   display: flex;
   flex-direction: column;
+  width: 100%;
 `;
 
 const Header = styled.div`
-  background-color: white;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 1.5rem;
+  background-color: var(--card);
+  border-bottom: 1px solid var(--border);
+  padding: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const HeaderContent = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const HeaderLeft = styled.div``;
-
-const HeaderTop = styled.div`
-  display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 1rem;
-  margin-bottom: 0.75rem;
-`;
-
-const BackButton = styled(Button)`
-  color: #4b5563;
   
-  &:hover {
-    color: #111827;
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0;
   }
 `;
 
-const BackIcon = styled(ArrowLeft)`
-  width: 1rem;
-  height: 1rem;
-  margin-right: 0.5rem;
+const HeaderLeft = styled.div`
+  flex: 1;
+  min-width: 0;
+`;
+
+const HeaderTop = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(0.5rem, 2vw, 1rem);
+  margin-bottom: clamp(0.5rem, 2vw, 0.75rem);
+`;
+
+const BackButton = styled(Button)`
+  color: var(--muted-foreground);
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
+  
+  &:hover {
+    color: var(--foreground);
+    background-color: var(--muted);
+  }
 `;
 
 const Divider = styled.div`
   height: 1.5rem;
   width: 1px;
-  background-color: #d1d5db;
+  background-color: var(--border);
+  display: none;
+  
+  @media (min-width: 640px) {
+    display: block;
+  }
 `;
 
 const StatusBadge = styled(Badge)`
   background-color: #dbeafe;
   color: #1d4ed8;
   border: 1px solid #bfdbfe;
+  font-size: clamp(0.625rem, 1.5vw, 0.75rem);
+  white-space: nowrap;
 `;
 
 const TemplateBadge = styled(Badge)`
-  background-color: #f9fafb;
-  color: #374151;
-  border: 1px solid #d1d5db;
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+  border: 1px solid var(--border);
+  font-size: clamp(0.625rem, 1.5vw, 0.75rem);
+  white-space: nowrap;
 `;
 
 const ConsolidationBadge = styled(Badge)`
   background-color: #f3e8ff;
   color: #7c3aed;
   border: 1px solid #e9d5ff;
-`;
-
-const PackageIcon = styled(Package)`
-  width: 0.75rem;
-  height: 0.75rem;
-  margin-right: 0.25rem;
+  font-size: clamp(0.625rem, 1.5vw, 0.75rem);
+  white-space: nowrap;
 `;
 
 const Title = styled.h1`
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #111827;
+  font-size: clamp(1.25rem, 4vw, 1.5rem);
+  color: var(--foreground);
   margin: 0;
+  word-break: break-word;
 `;
 
 const Subtitle = styled.p`
-  color: #4b5563;
+  color: var(--muted-foreground);
   margin: 0;
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
+  line-height: 1.4;
 `;
 
 const HeaderRight = styled.div`
   display: flex;
-  gap: 0.75rem;
+  flex-wrap: wrap;
+  gap: clamp(0.5rem, 2vw, 0.75rem);
 `;
 
 const EditButton = styled(Button)`
-  background-color: white;
-  border: 1px solid #d1d5db;
-  color: #374151;
+  background-color: var(--secondary);
+  border: 1px solid var(--border);
+  color: var(--secondary-foreground);
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
+  white-space: nowrap;
   
   &:hover {
-    background-color: #f9fafb;
+    background-color: var(--muted);
   }
-`;
-
-const EditIcon = styled(Edit)`
-  width: 1rem;
-  height: 1rem;
-  margin-right: 0.5rem;
-`;
-
-const SettingsIcon = styled(Settings)`
-  width: 1rem;
-  height: 1rem;
-  margin-right: 0.5rem;
 `;
 
 const ContentArea = styled.div`
   flex: 1;
-  padding: 1.5rem;
+  padding: clamp(0.75rem, 3vw, 1.5rem);
   overflow: auto;
+  background-color: var(--muted);
 `;
 
 const ContentWrapper = styled.div`
@@ -146,13 +152,13 @@ const ContentWrapper = styled.div`
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const SummaryGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 1rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(0.75rem, 2vw, 1rem);
   
   @media (min-width: 768px) {
     grid-template-columns: repeat(4, 1fr);
@@ -160,97 +166,113 @@ const SummaryGrid = styled.div`
 `;
 
 const SummaryCard = styled(Card)`
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  border: 1px solid var(--border);
+  background-color: var(--card);
 `;
 
 const SummaryCardContent = styled(CardContent)`
-  padding: 1rem;
+  padding: clamp(0.75rem, 3vw, 1rem);
 `;
 
 const SummaryLabel = styled.div`
-  font-size: 0.875rem;
-  color: #6b7280;
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
+  color: var(--muted-foreground);
+  margin-bottom: 0.25rem;
 `;
 
 const SummaryValue = styled.div`
-  font-weight: 600;
-  color: #111827;
+  color: var(--foreground);
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
+  word-break: break-word;
 `;
 
 const CurrentStageCard = styled(Card)`
   border: 2px solid #bfdbfe;
   background-color: #eff6ff;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 `;
 
 const CurrentStageContent = styled(CardContent)`
-  padding: 1.5rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const CurrentStageContainer = styled.div`
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
   gap: 1rem;
+  
+  @media (min-width: 640px) {
+    flex-direction: row;
+    align-items: flex-start;
+  }
 `;
 
 const StageIconContainer = styled.div`
-  flex-shrink: 0;
-  width: 2.5rem;
-  height: 2.5rem;
+  align-self: center;
+  width: clamp(2rem, 6vw, 2.5rem);
+  height: clamp(2rem, 6vw, 2.5rem);
   background-color: #dbeafe;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 2px solid #bfdbfe;
+  flex-shrink: 0;
 `;
 
 const ClockIcon = styled(Clock)`
-  width: 1.25rem;
-  height: 1.25rem;
+  width: clamp(1rem, 3vw, 1.25rem);
+  height: clamp(1rem, 3vw, 1.25rem);
   color: #2563eb;
 `;
 
 const StageContent = styled.div`
   flex: 1;
+  min-width: 0;
 `;
 
 const StageTitle = styled.h3`
-  font-size: 1.125rem;
-  font-weight: 600;
+  font-size: clamp(1rem, 3vw, 1.125rem);
   color: #1e40af;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 clamp(0.5rem, 2vw, 0.75rem) 0;
 `;
 
 const StageDescription = styled.p`
-  color: #4b5563;
-  margin: 0 0 1rem 0;
+  color: var(--muted-foreground);
+  margin: 0 0 clamp(0.75rem, 2vw, 1rem) 0;
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
+  line-height: 1.4;
 `;
 
 const ExternalNotice = styled.div`
-  padding: 0.75rem;
+  padding: clamp(0.5rem, 2vw, 0.75rem);
   background-color: #fef3c7;
   border: 1px solid #fde68a;
   border-radius: 0.5rem;
-  margin: 1rem 0;
+  margin: clamp(0.75rem, 2vw, 1rem) 0;
 `;
 
 const ExternalText = styled.p`
   color: #d97706;
   margin: 0;
-  font-size: 0.875rem;
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
+  line-height: 1.4;
 `;
 
 const ActionButtonsContainer = styled.div`
   display: flex;
+  flex-direction: column;
   gap: 0.75rem;
-  margin-top: 1.5rem;
+  margin-top: clamp(1rem, 3vw, 1.5rem);
+  
+  @media (min-width: 640px) {
+    flex-direction: row;
+  }
 `;
 
 const ResumeButton = styled(Button)`
   background-color: #16a34a;
   color: white;
+  flex: 1;
   
   &:hover {
     background-color: #15803d;
@@ -258,31 +280,20 @@ const ResumeButton = styled(Button)`
 `;
 
 const ViewConsolidationButton = styled(Button)`
-  background-color: white;
-  border: 1px solid #d1d5db;
-  color: #374151;
+  background-color: var(--secondary);
+  border: 1px solid var(--border);
+  color: var(--secondary-foreground);
+  flex: 1;
   
   &:hover {
-    background-color: #f9fafb;
+    background-color: var(--muted);
   }
-`;
-
-const PlayIcon = styled(Play)`
-  width: 1rem;
-  height: 1rem;
-  margin-right: 0.5rem;
-`;
-
-const ExternalIcon = styled(ExternalLink)`
-  width: 1rem;
-  height: 1rem;
-  margin-right: 0.5rem;
 `;
 
 const TwoColumnGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 1.5rem;
+  grid-template-columns: 1fr;
+  gap: clamp(1rem, 3vw, 1.5rem);
   
   @media (min-width: 1024px) {
     grid-template-columns: repeat(2, 1fr);
@@ -291,16 +302,17 @@ const TwoColumnGrid = styled.div`
 
 const JobDetailsCard = styled(Card)`
   border: 1px solid #c7d2fe;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  background-color: var(--card);
 `;
 
 const JobDetailsHeader = styled(CardHeader)`
   background-color: #eef2ff;
   border-bottom: 1px solid #c7d2fe;
+  padding: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const JobDetailsTitle = styled(CardTitle)`
-  font-size: 1.125rem;
+  font-size: clamp(1rem, 3vw, 1.125rem);
   color: #4338ca;
   display: flex;
   align-items: center;
@@ -308,105 +320,120 @@ const JobDetailsTitle = styled(CardTitle)`
 `;
 
 const JobDetailsContent = styled(CardContent)`
-  padding: 1.5rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const DetailsList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: clamp(0.75rem, 2vw, 1rem);
 `;
 
 const DetailGroup = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: clamp(0.5rem, 2vw, 0.75rem);
 `;
 
 const DetailGroupTitle = styled.h4`
-  font-weight: 600;
-  color: #374151;
+  color: var(--foreground);
   margin: 0;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border);
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
 `;
 
 const DetailItem = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 0.5rem 0;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: clamp(0.25rem, 1vw, 0.5rem) 0;
+  
+  @media (min-width: 640px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
 `;
 
 const DetailLabel = styled.span`
-  color: #6b7280;
-  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
   min-width: 120px;
 `;
 
 const DetailValue = styled.span`
-  color: #111827;
-  font-weight: 500;
-  text-align: right;
+  color: var(--foreground);
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
   flex: 1;
+  word-break: break-word;
+  
+  @media (min-width: 640px) {
+    text-align: right;
+  }
 `;
 
 const DocumentsCard = styled(Card)`
   border: 1px solid #e9d5ff;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  background-color: var(--card);
 `;
 
 const DocumentsHeader = styled(CardHeader)`
   background-color: #f3e8ff;
   border-bottom: 1px solid #e9d5ff;
+  padding: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const DocumentsTitle = styled(CardTitle)`
-  font-size: 1.125rem;
+  font-size: clamp(1rem, 3vw, 1.125rem);
   color: #7c3aed;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 `;
 
-const FileIcon = styled(FileText)`
-  width: 1.25rem;
-  height: 1.25rem;
-`;
-
 const DocumentsContent = styled(CardContent)`
-  padding: 1.5rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const DocumentsList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: clamp(0.5rem, 2vw, 0.75rem);
 `;
 
 const DocumentCard = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem;
-  background-color: white;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: clamp(0.5rem, 2vw, 0.75rem);
+  background-color: var(--card);
   border-radius: 0.5rem;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border);
+  
+  @media (min-width: 640px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
 `;
 
 const DocumentName = styled.span`
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #111827;
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
+  color: var(--foreground);
+  flex: 1;
 `;
 
 const DocumentActions = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  flex-wrap: wrap;
 `;
 
-const DocumentBadge = styled(Badge)<{ $color: 'green' | 'yellow' | 'red' }>`
+const DocumentBadge = styled(Badge)`
+  font-size: clamp(0.625rem, 1.5vw, 0.75rem);
+  
   ${props => {
     switch (props.$color) {
       case 'green':
@@ -427,23 +454,30 @@ const DocumentBadge = styled(Badge)<{ $color: 'green' | 'yellow' | 'red' }>`
           color: #dc2626;
           border: 1px solid #fecaca;
         `;
+      default:
+        return `
+          background-color: var(--muted);
+          color: var(--muted-foreground);
+          border: 1px solid var(--border);
+        `;
     }
   }}
 `;
 
 const DocumentButton = styled(Button)`
-  background-color: #f9fafb;
-  border: 1px solid #e5e7eb;
-  color: #374151;
+  background-color: var(--secondary);
+  border: 1px solid var(--border);
+  color: var(--secondary-foreground);
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
   
   &:hover {
-    background-color: #f3f4f6;
+    background-color: var(--muted);
   }
 `;
 
 const AddDocumentSection = styled.div`
-  margin-top: 1rem;
-  padding-top: 1rem;
+  margin-top: clamp(0.75rem, 2vw, 1rem);
+  padding-top: clamp(0.75rem, 2vw, 1rem);
   border-top: 1px solid #e9d5ff;
 `;
 
@@ -458,54 +492,44 @@ const AddDocumentButton = styled(Button)`
   }
 `;
 
-const PlusIcon = styled(Plus)`
-  width: 1rem;
-  height: 1rem;
-  margin-right: 0.5rem;
-`;
-
 const HistoryCard = styled(Card)`
   border: 1px solid #fed7aa;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  background-color: var(--card);
 `;
 
 const HistoryHeader = styled(CardHeader)`
   background-color: #fff7ed;
   border-bottom: 1px solid #fed7aa;
+  padding: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const HistoryTitle = styled(CardTitle)`
-  font-size: 1.125rem;
+  font-size: clamp(1rem, 3vw, 1.125rem);
   color: #c2410c;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 `;
 
-const HistoryIcon = styled(History)`
-  width: 1.25rem;
-  height: 1.25rem;
-`;
-
 const HistoryContent = styled(CardContent)`
-  padding: 1.5rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const HistoryList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  max-height: 16rem;
+  gap: clamp(0.75rem, 2vw, 1rem);
+  max-height: clamp(12rem, 40vh, 16rem);
   overflow-y: auto;
 `;
 
 const HistoryItem = styled.div`
   display: flex;
-  gap: 1rem;
-  padding: 0.75rem;
-  background-color: white;
+  gap: clamp(0.75rem, 2vw, 1rem);
+  padding: clamp(0.5rem, 2vw, 0.75rem);
+  background-color: var(--card);
   border-radius: 0.5rem;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border);
 `;
 
 const HistoryDot = styled.div`
@@ -524,105 +548,129 @@ const HistoryItemContent = styled.div`
 
 const HistoryItemHeader = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 0.5rem;
+  
+  @media (min-width: 640px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
 `;
 
-const HistoryItemLeft = styled.div``;
+const HistoryItemLeft = styled.div`
+  flex: 1;
+  min-width: 0;
+`;
 
 const HistoryEventName = styled.p`
-  font-weight: 500;
-  font-size: 0.875rem;
-  color: #111827;
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
+  color: var(--foreground);
   margin: 0;
 `;
 
 const HistoryEventDetails = styled.p`
-  font-size: 0.875rem;
-  color: #4b5563;
-  margin-top: 0.25rem;
-  margin-bottom: 0;
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
+  color: var(--muted-foreground);
+  margin: 0.25rem 0 0 0;
+  line-height: 1.3;
 `;
 
 const HistoryTimestamp = styled.div`
-  font-size: 0.75rem;
-  color: #6b7280;
+  font-size: clamp(0.625rem, 1.5vw, 0.75rem);
+  color: var(--muted-foreground);
   white-space: nowrap;
-  margin-left: 1rem;
 `;
 
 const HistoryUser = styled.p`
-  font-size: 0.75rem;
-  color: #6b7280;
+  font-size: clamp(0.625rem, 1.5vw, 0.75rem);
+  color: var(--muted-foreground);
   margin: 0.25rem 0 0 0;
 `;
 
-interface IndividualJobDetailsPageProps {
-  jobData: any;
-  consolidationData: any;
-  onBackToConsolidation: () => void;
-}
+export function IndividualJobDetailsPage() {
+  const { consolidationId, jobId } = useParams();
+  const navigate = useNavigate();
+  const { getConsolidation, getJob } = useConsolidation();
+  const [jobData, setJobData] = useState(null);
+  const [consolidationData, setConsolidationData] = useState(null);
 
-export function IndividualJobDetailsPage({ jobData, consolidationData, onBackToConsolidation }: IndividualJobDetailsPageProps) {
-  const progressStages = [
+  useEffect(() => {
+    if (consolidationId) {
+      const cons = getConsolidation(consolidationId);
+      const job = getJob(consolidationId, jobId);
+      setConsolidationData(cons);
+      setJobData(job);
+    } else {
+      // standalone job lookup
+      fetchJobById(jobId).then(setJobData);
+    }
+  }, [consolidationId, jobId, getConsolidation, getJob]);
+
+  if (!jobData) {
+    return (
+      <div style={{ padding: "2rem", textAlign: "center" }}>
+        <h2>Job not found</h2>
+        <button onClick={() => navigate("/jobs")}>Back to Jobs</button>
+      </div>
+    );
+  }
+
+  // Handler to navigate back to consolidation details
+  const handleBack = () => {
+    if (consolidationData) {
+       navigate(`/consolidation/${consolidationData.id}`);
+     } else {
+       navigate("/jobs");
+     }
+  };
+  const progressStages = jobStages.map((stage, index) => {
+    const jobStage = jobData.currentStage || 1;
+    return {
+      name: stage.name,
+      status: index < jobStage ? 'completed' : 
+              index === jobStage - 1 ? 'current' : 
+              stage.name === 'Destination Clearance' ? 'external' : 'pending',
+      description: stage.description
+    };
+  });
+
+  const currentStageIndex = progressStages.findIndex(stage => stage.status === 'current');
+  const currentStage = progressStages[currentStageIndex] || progressStages[0];
+
+  const historyLog = [
     { 
-      name: "Booking & Preparation", 
-      status: "completed" as const, 
-      description: "Job added to consolidation and initial setup complete"
+      timestamp: jobData.createdAt || new Date().toISOString(), 
+      event: "Job Created", 
+      user: "System", 
+      details: `Individual job ${jobData.id} created and added to consolidation` 
     },
     { 
-      name: "Origin Handling", 
-      status: "current" as const, 
-      description: "Collection and preparation at origin location"
+      timestamp: jobData.createdAt || new Date().toISOString(), 
+      event: "Added to Consolidation", 
+      user: "System", 
+      details: `Job assigned to consolidation ${consolidationData?.id || "Standalone"}` 
     },
     { 
-      name: "Departure & Transit", 
-      status: "pending" as const, 
-      description: "Cargo in transit as part of consolidation"
+      timestamp: jobData.updatedAt || new Date().toISOString(), 
+      event: "Documentation Started", 
+      user: "System", 
+      details: "Job documentation preparation initiated" 
     },
     { 
-      name: "Arrival Notification", 
-      status: "pending" as const, 
-      description: "Notification of consolidation arrival"
-    },
-    { 
-      name: "Destination Clearance", 
-      status: "external" as const,
-      description: "Customs clearance handled by consolidation process"
-    },
-    { 
-      name: "Destination Handling", 
-      status: "pending" as const, 
-      description: "Deconsolidation and individual delivery"
-    },
-    { 
-      name: "Completion & Settlement", 
-      status: "pending" as const, 
-      description: "Individual job completion and settlement"
+      timestamp: jobData.updatedAt || new Date().toISOString(), 
+      event: "Stage Advanced", 
+      user: "System", 
+      details: `Advanced to ${currentStage?.name}` 
     }
   ];
 
-  const currentStageIndex = progressStages.findIndex(stage => stage.status === 'current');
-  const currentStage = progressStages[currentStageIndex];
-
-  const historyLog = [
-    { timestamp: "2025-01-15T10:00:00Z", event: "Job Created", user: "System", details: `Individual job ${jobData.id} created and added to consolidation` },
-    { timestamp: "2025-01-15T10:05:00Z", event: "Added to Consolidation", user: "System", details: `Job assigned to consolidation ${consolidationData.id}` },
-    { timestamp: "2025-01-15T10:10:00Z", event: "Documentation Started", user: "System", details: "Job documentation preparation initiated" },
-    { timestamp: "2025-01-15T11:00:00Z", event: "Stage Advanced", user: "System", details: "Advanced to Origin Handling stage" }
-  ];
-
-  const formatDateTime = (dateString: string) => {
+  const formatDateTime = (dateString) => {
     return new Date(dateString).toLocaleString();
   };
 
   return (
     <PageContainer>
-      {/* Sidebar */}
-      <ModernSidebar currentPage="jobs" />
-      
-      {/* Main Content */}
-      <MainContent>
         {/* Header */}
         <Header>
           <HeaderContent>
@@ -631,35 +679,46 @@ export function IndividualJobDetailsPage({ jobData, consolidationData, onBackToC
                 <BackButton
                   variant="ghost"
                   size="sm"
-                  onClick={onBackToConsolidation}
+                  onClick={handleBack}
                 >
-                  <BackIcon />
-                  Back to Consolidation
+                  <ArrowLeft style={{width: '1rem', height: '1rem', marginRight: '0.5rem'}} />
+                  {consolidationData ? "Back to Consolidation" : "Back to Jobs"}
                 </BackButton>
                 <Divider />
                 <StatusBadge>
-                  {jobData.status}
+                  {jobData.status || 'In Progress'}
                 </StatusBadge>
                 <TemplateBadge variant="outline">
                   {jobData.template}
                 </TemplateBadge>
-                <ConsolidationBadge variant="outline">
-                  <PackageIcon />
+                {consolidationData ? (
+                   <ConsolidationBadge variant="outline">
+                     <Package style={{width: '0.75rem', height: '0.75rem', marginRight: '0.25rem'}} />
+                     Part of {consolidationData?.id || "Standalone"}
+                   </ConsolidationBadge>
+                 ) : (
+                   <ConsolidationBadge variant="outline">
+                     <Package style={{width: '0.75rem', height: '0.75rem', marginRight: '0.25rem'}} />
+                     Standalone Job
+                   </ConsolidationBadge>
+                 )}
+                {/* <ConsolidationBadge variant="outline">
+                  <Package style={{width: '0.75rem', height: '0.75rem', marginRight: '0.25rem'}} />
                   Part of {consolidationData.id}
-                </ConsolidationBadge>
+                </ConsolidationBadge> */}
               </HeaderTop>
               <Title>{jobData.id}</Title>
               <Subtitle>
-                PO: {jobData.poNumber} • {jobData.template} • Part of consolidation {consolidationData.id}
+                PO: {jobData.poNumber} • {jobData.template} {consolidationData ? ` • Part of consolidation ${consolidationData?.id || "Standalone"}` : " • Standalone Job"}
               </Subtitle>
             </HeaderLeft>
             <HeaderRight>
               <EditButton variant="outline" size="sm">
-                <EditIcon />
+                <Edit style={{width: '1rem', height: '1rem', marginRight: '0.5rem'}} />
                 Edit Details
               </EditButton>
               <EditButton variant="outline" size="sm">
-                <SettingsIcon />
+                <Settings style={{width: '1rem', height: '1rem', marginRight: '0.5rem'}} />
                 Modify Progress
               </EditButton>
             </HeaderRight>
@@ -688,21 +747,21 @@ export function IndividualJobDetailsPage({ jobData, consolidationData, onBackToC
               <SummaryCard>
                 <SummaryCardContent>
                   <SummaryLabel>Current Stage</SummaryLabel>
-                  <SummaryValue>Stage {currentStageIndex + 1} of {progressStages.length}</SummaryValue>
+                  <SummaryValue>{consolidationData?.id || "Standalone"}</SummaryValue>
                 </SummaryCardContent>
               </SummaryCard>
               
               <SummaryCard>
                 <SummaryCardContent>
                   <SummaryLabel>Consolidation</SummaryLabel>
-                  <SummaryValue>{consolidationData.id}</SummaryValue>
+                  <SummaryValue>{consolidationData?.id || "Standalone"}</SummaryValue>
                 </SummaryCardContent>
               </SummaryCard>
             </SummaryGrid>
 
             {/* Progress Timeline */}
             <TrackingProgress 
-              currentStage={currentStageIndex + 1} 
+              currentStage={jobData.currentStage || 1} 
               stages={progressStages}
             />
 
@@ -723,18 +782,19 @@ export function IndividualJobDetailsPage({ jobData, consolidationData, onBackToC
                     
                     <ExternalNotice>
                       <ExternalText>
-                        📋 This individual job follows the progress of its parent consolidation {consolidationData.id}. 
-                        Most actions are managed at the consolidation level.
+                      {consolidationData
+                         ? `📋 This individual job follows the progress of its parent consolidation ${consolidationData?.id || "Standalone"}. Most actions are managed at the consolidation level.`
+                         : "📋 This is a standalone job. It can be managed independently or added to a consolidation later."}
                       </ExternalText>
                     </ExternalNotice>
                     
                     <ActionButtonsContainer>
                       <ResumeButton>
-                        <PlayIcon />
+                        <Play style={{width: '1rem', height: '1rem', marginRight: '0.5rem'}} />
                         View Job Progress
                       </ResumeButton>
-                      <ViewConsolidationButton variant="outline" onClick={onBackToConsolidation}>
-                        <ExternalIcon />
+                      <ViewConsolidationButton variant="outline" onClick={handleBack}>
+                        <ExternalLink style={{width: '1rem', height: '1rem', marginRight: '0.5rem'}} />
                         View Consolidation
                       </ViewConsolidationButton>
                     </ActionButtonsContainer>
@@ -748,7 +808,7 @@ export function IndividualJobDetailsPage({ jobData, consolidationData, onBackToC
               <JobDetailsCard>
                 <JobDetailsHeader>
                   <JobDetailsTitle>
-                    <PackageIcon />
+                    <Package style={{width: '1.25rem', height: '1.25rem'}} />
                     Individual Job Details
                   </JobDetailsTitle>
                 </JobDetailsHeader>
@@ -770,7 +830,7 @@ export function IndividualJobDetailsPage({ jobData, consolidationData, onBackToC
                       </DetailItem>
                       <DetailItem>
                         <DetailLabel>Status:</DetailLabel>
-                        <DetailValue>{jobData.status}</DetailValue>
+                        <DetailValue>{jobData.status || 'In Progress'}</DetailValue>
                       </DetailItem>
                     </DetailGroup>
 
@@ -778,11 +838,13 @@ export function IndividualJobDetailsPage({ jobData, consolidationData, onBackToC
                       <DetailGroupTitle>Consolidation Info</DetailGroupTitle>
                       <DetailItem>
                         <DetailLabel>Parent Consolidation:</DetailLabel>
-                        <DetailValue>{consolidationData.id}</DetailValue>
+                        <DetailValue>{consolidationData?.id || "Standalone"}</DetailValue>
                       </DetailItem>
                       <DetailItem>
                         <DetailLabel>Route:</DetailLabel>
-                        <DetailValue>{consolidationData.origin?.city} → {consolidationData.destination?.city}</DetailValue>
+                        <DetailValue>
+                          {(consolidationData?.origin?.city || 'N/A')} → {(consolidationData?.destination?.city || 'N/A')}
+                        </DetailValue>
                       </DetailItem>
                     </DetailGroup>
 
@@ -802,11 +864,15 @@ export function IndividualJobDetailsPage({ jobData, consolidationData, onBackToC
                       <DetailGroupTitle>Cargo Details</DetailGroupTitle>
                       <DetailItem>
                         <DetailLabel>Weight:</DetailLabel>
-                        <DetailValue>{jobData.weight || '0'} kg</DetailValue>
+                        <DetailValue>{jobData.cargo?.weight || jobData.weight || '0'} kg</DetailValue>
                       </DetailItem>
                       <DetailItem>
                         <DetailLabel>Volume:</DetailLabel>
-                        <DetailValue>{jobData.volume || '0'} cbm</DetailValue>
+                        <DetailValue>{jobData.cargo?.volume || jobData.volume || '0'} m³</DetailValue>
+                      </DetailItem>
+                      <DetailItem>
+                        <DetailLabel>Description:</DetailLabel>
+                        <DetailValue>{jobData.cargo?.description || 'Not specified'}</DetailValue>
                       </DetailItem>
                     </DetailGroup>
                   </DetailsList>
@@ -817,17 +883,17 @@ export function IndividualJobDetailsPage({ jobData, consolidationData, onBackToC
               <DocumentsCard>
                 <DocumentsHeader>
                   <DocumentsTitle>
-                    <FileIcon />
+                    <FileText style={{width: '1.25rem', height: '1.25rem'}} />
                     Job Documents
                   </DocumentsTitle>
                 </DocumentsHeader>
                 <DocumentsContent>
                   <DocumentsList>
                     {[
-                      { name: "Commercial Invoice", status: "Generated", color: "green" as const },
-                      { name: "Packing List", status: "Generated", color: "green" as const },
-                      { name: "Job Instructions", status: "Pending", color: "yellow" as const },
-                      { name: "Delivery Receipt", status: "Missing", color: "red" as const }
+                      { name: "Commercial Invoice", status: "Generated", color: "green" },
+                      { name: "Packing List", status: "Generated", color: "green" },
+                      { name: "Job Instructions", status: "Pending", color: "yellow" },
+                      { name: "Delivery Receipt", status: "Missing", color: "red" }
                     ].map((doc, index) => (
                       <DocumentCard key={index}>
                         <DocumentName>{doc.name}</DocumentName>
@@ -847,7 +913,7 @@ export function IndividualJobDetailsPage({ jobData, consolidationData, onBackToC
                   
                   <AddDocumentSection>
                     <AddDocumentButton variant="outline">
-                      <PlusIcon />
+                      <Plus style={{width: '1rem', height: '1rem', marginRight: '0.5rem'}} />
                       Add Job-Specific Document
                     </AddDocumentButton>
                   </AddDocumentSection>
@@ -859,7 +925,7 @@ export function IndividualJobDetailsPage({ jobData, consolidationData, onBackToC
             <HistoryCard>
               <HistoryHeader>
                 <HistoryTitle>
-                  <HistoryIcon />
+                  <History style={{width: '1.25rem', height: '1.25rem'}} />
                   Job Activity History
                 </HistoryTitle>
               </HistoryHeader>
@@ -887,7 +953,6 @@ export function IndividualJobDetailsPage({ jobData, consolidationData, onBackToC
             </HistoryCard>
           </ContentWrapper>
         </ContentArea>
-      </MainContent>
     </PageContainer>
   );
 }

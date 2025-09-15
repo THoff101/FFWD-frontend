@@ -4008,33 +4008,35 @@
 }
 
 .dark {
-  --background: #111827;
-  --foreground: #fafafa;
-  --card: #111827;
-  --card-foreground: #fafafa;
-  --popover: #111827;
-  --popover-foreground: #fafafa;
-  --primary: #fafafa;
-  --primary-foreground: #374151;
-  --secondary: #374151;
-  --secondary-foreground: #fafafa;
-  --muted: #374151;
-  --muted-foreground: #6b7280;
-  --accent: #374151;
-  --accent-foreground: #fafafa;
-  --destructive: #dc2626;
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+  --card: #1e293b;
+  --card-foreground: #f1f5f9;
+  --popover: #1e293b;
+  --popover-foreground: #f1f5f9;
+  --primary: #3b82f6;
+  --primary-foreground: #fff;
+  --secondary: #334155;
+  --secondary-foreground: #f1f5f9;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --accent: #475569;
+  --accent-foreground: #f1f5f9;
+  --destructive: #ef4444;
   --destructive-foreground: #fef2f2;
-  --border: #374151;
-  --input: #374151;
-  --ring: #6b7280;
-  --sidebar: #374151;
-  --sidebar-foreground: #fafafa;
+  --border: #334155;
+  --input: #334155;
+  --input-background: #1e293b;
+  --switch-background: #475569;
+  --ring: #3b82f6;
+  --sidebar: #1e293b;
+  --sidebar-foreground: #f1f5f9;
   --sidebar-primary: #3b82f6;
-  --sidebar-primary-foreground: #fafafa;
-  --sidebar-accent: #374151;
-  --sidebar-accent-foreground: #fafafa;
-  --sidebar-border: #374151;
-  --sidebar-ring: #6b7280;
+  --sidebar-primary-foreground: #fff;
+  --sidebar-accent: #334155;
+  --sidebar-accent-foreground: #f1f5f9;
+  --sidebar-border: #334155;
+  --sidebar-ring: #3b82f6;
 }
 
 * {
@@ -4114,6 +4116,32 @@ input, textarea, select {
 :focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
+}
+
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+}
+
+.app-content {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (width >= 768px) {
+  .app-content {
+    margin-left: 0;
+  }
+}
+
+@media (width <= 767px) {
+  body.sidebar-open {
+    overflow: hidden;
+  }
+}
+
+* {
+  transition: background-color .2s, border-color .2s, color .2s;
 }
 
 @property --tw-translate-x {

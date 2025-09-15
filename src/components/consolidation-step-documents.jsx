@@ -1,3 +1,4 @@
+import { useState } from "react";
 import styled from "styled-components";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -7,83 +8,78 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { Calendar, FileText, Plus, Settings, Upload, CalendarIcon } from "lucide-react";
-import { useState } from "react";
 
-// Styled Components
+// Responsive styled components with mobile-first approach
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const HeaderSection = styled.div`
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: clamp(1rem, 4vw, 2rem);
 `;
 
 const IconContainer = styled.div`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 4rem;
-  height: 4rem;
+  width: clamp(3rem, 8vw, 4rem);
+  height: clamp(3rem, 8vw, 4rem);
   background-color: #e0e7ff;
   border-radius: 50%;
-  margin-bottom: 1rem;
+  margin-bottom: clamp(0.75rem, 2vw, 1rem);
 `;
 
 const FileTextIcon = styled(FileText)`
-  width: 2rem;
-  height: 2rem;
+  width: clamp(1.5rem, 4vw, 2rem);
+  height: clamp(1.5rem, 4vw, 2rem);
   color: #4338ca;
 `;
 
 const HeaderTitle = styled.h2`
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #111827;
-  margin: 0 0 0.5rem 0;
+  font-size: clamp(1.125rem, 3vw, 1.25rem);
+  color: var(--foreground);
+  margin: 0 0 clamp(0.25rem, 1vw, 0.5rem) 0;
 `;
 
 const HeaderSubtitle = styled.p`
-  color: #4b5563;
+  color: var(--muted-foreground);
   margin: 0;
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
 `;
 
 const DatesCard = styled(Card)`
   border: 1px solid #c7d2fe;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  background-color: var(--card);
 `;
 
 const DatesHeader = styled(CardHeader)`
   background-color: #eef2ff;
   border-bottom: 1px solid #c7d2fe;
+  padding: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const DatesTitle = styled(CardTitle)`
-  font-size: 1.125rem;
+  font-size: clamp(1rem, 3vw, 1.125rem);
   color: #4338ca;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 `;
 
-const CalendarIcon1 = styled(Calendar)`
-  width: 1.25rem;
-  height: 1.25rem;
-`;
-
 const DatesContent = styled(CardContent)`
-  padding: 1.5rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const DateGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 1.5rem;
+  grid-template-columns: 1fr;
+  gap: clamp(1rem, 3vw, 1.5rem);
   
   @media (min-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
@@ -93,13 +89,12 @@ const DateGrid = styled.div`
 const FieldContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: clamp(0.25rem, 1vw, 0.5rem);
 `;
 
 const StyledLabel = styled(Label)`
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #374151;
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
+  color: var(--foreground);
 `;
 
 const DateInputWrapper = styled.div`
@@ -107,9 +102,9 @@ const DateInputWrapper = styled.div`
 `;
 
 const DateInput = styled(Input)`
-  background-color: white;
-  border: 1px solid #d1d5db;
-  padding-left: 2.5rem;
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  padding-left: clamp(2rem, 6vw, 2.5rem);
   
   &:focus {
     border-color: #4338ca;
@@ -118,45 +113,46 @@ const DateInput = styled(Input)`
 `;
 
 const CalendarIconInput = styled(CalendarIcon)`
-  width: 1rem;
-  height: 1rem;
-  color: #9ca3af;
+  width: clamp(0.875rem, 2.5vw, 1rem);
+  height: clamp(0.875rem, 2.5vw, 1rem);
+  color: var(--muted-foreground);
   position: absolute;
-  left: 0.75rem;
+  left: clamp(0.5rem, 2vw, 0.75rem);
   top: 50%;
   transform: translateY(-50%);
+  pointer-events: none;
 `;
 
 const HelpText = styled.p`
-  font-size: 0.75rem;
-  color: #6b7280;
+  font-size: clamp(0.625rem, 1.5vw, 0.75rem);
+  color: var(--muted-foreground);
   margin: 0;
+  line-height: 1.3;
 `;
 
 const TradeCard = styled(Card)`
   border: 1px solid #a7f3d0;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  background-color: var(--card);
 `;
 
 const TradeHeader = styled(CardHeader)`
   background-color: #ecfdf5;
   border-bottom: 1px solid #a7f3d0;
+  padding: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const TradeTitle = styled(CardTitle)`
-  font-size: 1.125rem;
+  font-size: clamp(1rem, 3vw, 1.125rem);
   color: #047857;
 `;
 
 const TradeContent = styled(CardContent)`
-  padding: 1.5rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
 `;
 
-const TradeSelect = styled(Select)``;
-
 const TradeSelectTrigger = styled(SelectTrigger)`
-  background-color: white;
-  border: 1px solid #d1d5db;
+  background-color: var(--card);
+  border: 1px solid var(--border);
   
   &:focus {
     border-color: #10b981;
@@ -166,16 +162,17 @@ const TradeSelectTrigger = styled(SelectTrigger)`
 
 const DocumentsCard = styled(Card)`
   border: 1px solid #fde68a;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  background-color: var(--card);
 `;
 
 const DocumentsHeader = styled(CardHeader)`
   background-color: #fffbeb;
   border-bottom: 1px solid #fde68a;
+  padding: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const DocumentsTitle = styled(CardTitle)`
-  font-size: 1.125rem;
+  font-size: clamp(1rem, 3vw, 1.125rem);
   color: #d97706;
   display: flex;
   align-items: center;
@@ -183,24 +180,30 @@ const DocumentsTitle = styled(CardTitle)`
 `;
 
 const DocumentsContent = styled(CardContent)`
-  padding: 1.5rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const DocumentsList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: clamp(0.5rem, 2vw, 0.75rem);
 `;
 
 const DocumentItem = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem;
-  background-color: white;
+  flex-direction: column;
+  gap: 1rem;
+  padding: clamp(0.75rem, 3vw, 1rem);
+  background-color: var(--card);
   border-radius: 0.5rem;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border);
   transition: border-color 0.2s;
+  
+  @media (min-width: 640px) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
   
   &:hover {
     border-color: #fde68a;
@@ -210,98 +213,91 @@ const DocumentItem = styled.div`
 const DocumentLeft = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: clamp(0.5rem, 2vw, 0.75rem);
+  flex: 1;
+  min-width: 0;
 `;
 
-const DocumentIconContainer = styled.div`
-  flex-shrink: 0;
+const DocumentInfo = styled.div`
+  flex: 1;
+  min-width: 0;
 `;
-
-const DocumentIcon = styled(FileText)`
-  width: 1rem;
-  height: 1rem;
-  color: #9ca3af;
-`;
-
-const DocumentInfo = styled.div``;
 
 const DocumentName = styled.span`
-  font-weight: 500;
-  color: #111827;
+  color: var(--foreground);
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
+  display: block;
 `;
 
 const RequiredBadge = styled(Badge)`
-  margin-left: 0.5rem;
-  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  font-size: clamp(0.625rem, 1.5vw, 0.75rem);
   background-color: #fee2e2;
   color: #dc2626;
   border: 1px solid #fecaca;
+  display: inline-block;
 `;
 
 const DocumentActions = styled.div`
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
 `;
 
-const GenerateButton = styled(Button)`
-  background-color: #eff6ff;
-  border: 1px solid #bfdbfe;
-  color: #1d4ed8;
+const ActionButton = styled(Button)`
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
+  white-space: nowrap;
   
-  &:hover {
-    background-color: #dbeafe;
+  &.generate {
+    background-color: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1d4ed8;
+    
+    &:hover {
+      background-color: #dbeafe;
+    }
   }
-`;
-
-const UploadButton = styled(Button)`
-  background-color: #f9fafb;
-  border: 1px solid #e5e7eb;
-  color: #374151;
   
-  &:hover {
-    background-color: #f3f4f6;
+  &.upload {
+    background-color: var(--secondary);
+    border: 1px solid var(--border);
+    color: var(--secondary-foreground);
+    
+    &:hover {
+      background-color: var(--muted);
+    }
   }
-`;
-
-const GenerateIcon = styled(Settings)`
-  width: 0.75rem;
-  height: 0.75rem;
-  margin-right: 0.25rem;
-`;
-
-const UploadIcon = styled(Upload)`
-  width: 0.75rem;
-  height: 0.75rem;
-  margin-right: 0.25rem;
 `;
 
 const CustomCard = styled(Card)`
   border: 1px solid #e9d5ff;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  background-color: var(--card);
 `;
 
 const CustomHeader = styled(CardHeader)`
   background-color: #f3e8ff;
   border-bottom: 1px solid #e9d5ff;
+  padding: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const CustomTitle = styled(CardTitle)`
-  font-size: 1.125rem;
+  font-size: clamp(1rem, 3vw, 1.125rem);
   color: #7c3aed;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 1rem;
+  
+  @media (min-width: 640px) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
 `;
 
 const CustomTitleLeft = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-`;
-
-const PlusIcon = styled(Plus)`
-  width: 1.25rem;
-  height: 1.25rem;
 `;
 
 const AddButton = styled(Button)`
@@ -314,60 +310,61 @@ const AddButton = styled(Button)`
   }
 `;
 
-const AddButtonIcon = styled(Plus)`
-  width: 1rem;
-  height: 1rem;
-  margin-right: 0.5rem;
-`;
-
 const CustomContent = styled(CardContent)`
-  padding: 1.5rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const EmptyState = styled.div`
   text-align: center;
-  padding: 2rem 0;
-  color: #6b7280;
+  padding: clamp(1rem, 4vw, 2rem) 0;
+  color: var(--muted-foreground);
 `;
 
 const EmptyIcon = styled(FileText)`
-  width: 3rem;
-  height: 3rem;
-  margin: 0 auto 0.75rem auto;
-  color: #d1d5db;
+  width: clamp(2rem, 6vw, 3rem);
+  height: clamp(2rem, 6vw, 3rem);
+  margin: 0 auto clamp(0.5rem, 2vw, 0.75rem) auto;
+  color: var(--muted-foreground);
+  opacity: 0.5;
 `;
 
 const EmptyText = styled.p`
-  font-size: 0.875rem;
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
   margin: 0;
 `;
 
 const EmptySubtext = styled.p`
-  font-size: 0.75rem;
-  color: #9ca3af;
-  margin: 0.25rem 0 0 0;
+  font-size: clamp(0.625rem, 1.5vw, 0.75rem);
+  color: var(--muted-foreground);
+  margin: clamp(0.125rem, 0.5vw, 0.25rem) 0 0 0;
+  opacity: 0.7;
 `;
 
 const CustomDocumentsList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: clamp(0.5rem, 2vw, 0.75rem);
 `;
 
 const CustomDocumentItem = styled.div`
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 0.75rem;
-  padding: 1rem;
-  background-color: white;
+  padding: clamp(0.75rem, 3vw, 1rem);
+  background-color: var(--card);
   border-radius: 0.5rem;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border);
+  
+  @media (min-width: 640px) {
+    flex-direction: row;
+    align-items: center;
+  }
 `;
 
 const CustomInput = styled(Input)`
   flex: 1;
-  background-color: white;
-  border: 1px solid #d1d5db;
+  background-color: var(--card);
+  border: 1px solid var(--border);
   
   &:focus {
     border-color: #7c3aed;
@@ -377,7 +374,7 @@ const CustomInput = styled(Input)`
 
 const RemoveButton = styled(Button)`
   color: #dc2626;
-  background-color: white;
+  background-color: var(--card);
   border: 1px solid #fecaca;
   
   &:hover {
@@ -388,27 +385,29 @@ const RemoveButton = styled(Button)`
 
 const InstructionsCard = styled(Card)`
   border: 1px solid #fda4af;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  background-color: var(--card);
 `;
 
 const InstructionsHeader = styled(CardHeader)`
   background-color: #fff1f2;
   border-bottom: 1px solid #fda4af;
+  padding: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const InstructionsTitle = styled(CardTitle)`
-  font-size: 1.125rem;
+  font-size: clamp(1rem, 3vw, 1.125rem);
   color: #be185d;
 `;
 
 const InstructionsContent = styled(CardContent)`
-  padding: 1.5rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const InstructionsTextarea = styled(Textarea)`
-  background-color: white;
-  border: 1px solid #d1d5db;
-  min-height: 6rem;
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  min-height: clamp(4rem, 12vw, 6rem);
+  resize: vertical;
   
   &:focus {
     border-color: #ec4899;
@@ -416,12 +415,7 @@ const InstructionsTextarea = styled(Textarea)`
   }
 `;
 
-interface ConsolidationStepDocumentsProps {
-  data: any;
-  updateData: (field: string, value: any) => void;
-}
-
-export function ConsolidationStepDocuments({ data, updateData }: ConsolidationStepDocumentsProps) {
+export function ConsolidationStepDocuments({ data, updateData }) {
   const [customDocuments, setCustomDocuments] = useState(data.customDocuments || []);
 
   const consolidationDocuments = [
@@ -440,16 +434,16 @@ export function ConsolidationStepDocuments({ data, updateData }: ConsolidationSt
     updateData('customDocuments', updated);
   };
 
-  const updateCustomDocument = (id: number, field: string, value: string) => {
-    const updated = customDocuments.map((doc: any) => 
+  const updateCustomDocument = (id, field, value) => {
+    const updated = customDocuments.map((doc) => 
       doc.id === id ? { ...doc, [field]: value } : doc
     );
     setCustomDocuments(updated);
     updateData('customDocuments', updated);
   };
 
-  const removeCustomDocument = (id: number) => {
-    const updated = customDocuments.filter((doc: any) => doc.id !== id);
+  const removeCustomDocument = (id) => {
+    const updated = customDocuments.filter((doc) => doc.id !== id);
     setCustomDocuments(updated);
     updateData('customDocuments', updated);
   };
@@ -469,7 +463,7 @@ export function ConsolidationStepDocuments({ data, updateData }: ConsolidationSt
       <DatesCard>
         <DatesHeader>
           <DatesTitle>
-            <CalendarIcon1 />
+            <Calendar style={{ width: '1.25rem', height: '1.25rem' }} />
             Shipping Dates
           </DatesTitle>
         </DatesHeader>
@@ -514,7 +508,7 @@ export function ConsolidationStepDocuments({ data, updateData }: ConsolidationSt
         <TradeContent>
           <FieldContainer>
             <StyledLabel htmlFor="incoterms">Incoterms</StyledLabel>
-            <TradeSelect onValueChange={(value) => updateData('incoterms', value)}>
+            <Select onValueChange={(value) => updateData('incoterms', value)}>
               <TradeSelectTrigger id="incoterms">
                 <SelectValue placeholder="Select Incoterms..." />
               </TradeSelectTrigger>
@@ -530,7 +524,7 @@ export function ConsolidationStepDocuments({ data, updateData }: ConsolidationSt
                 <SelectItem value="dpu">DPU - Delivered at Place Unloaded</SelectItem>
                 <SelectItem value="ddp">DDP - Delivered Duty Paid</SelectItem>
               </SelectContent>
-            </TradeSelect>
+            </Select>
             <HelpText>Terms of trade for the consolidation</HelpText>
           </FieldContainer>
         </TradeContent>
@@ -540,7 +534,7 @@ export function ConsolidationStepDocuments({ data, updateData }: ConsolidationSt
       <DocumentsCard>
         <DocumentsHeader>
           <DocumentsTitle>
-            <FileTextIcon />
+            <FileText style={{ width: '1.25rem', height: '1.25rem' }} />
             Required Documents for Consolidation
           </DocumentsTitle>
         </DocumentsHeader>
@@ -549,27 +543,25 @@ export function ConsolidationStepDocuments({ data, updateData }: ConsolidationSt
             {consolidationDocuments.map((doc, index) => (
               <DocumentItem key={index}>
                 <DocumentLeft>
-                  <DocumentIconContainer>
-                    <DocumentIcon />
-                  </DocumentIconContainer>
+                  <FileText style={{ width: '1rem', height: '1rem', color: 'var(--muted-foreground)' }} />
                   <DocumentInfo>
                     <DocumentName>{doc.name}</DocumentName>
                     {doc.required && (
-                      <RequiredBadge variant="destructive">Required</RequiredBadge>
+                      <RequiredBadge>Required</RequiredBadge>
                     )}
                   </DocumentInfo>
                 </DocumentLeft>
                 <DocumentActions>
                   {doc.canGenerate && (
-                    <GenerateButton variant="outline" size="sm">
-                      <GenerateIcon />
+                    <ActionButton className="generate" variant="outline" size="sm">
+                      <Settings style={{ width: '0.75rem', height: '0.75rem', marginRight: '0.25rem' }} />
                       Generate
-                    </GenerateButton>
+                    </ActionButton>
                   )}
-                  <UploadButton variant="outline" size="sm">
-                    <UploadIcon />
+                  <ActionButton className="upload" variant="outline" size="sm">
+                    <Upload style={{ width: '0.75rem', height: '0.75rem', marginRight: '0.25rem' }} />
                     Upload
-                  </UploadButton>
+                  </ActionButton>
                 </DocumentActions>
               </DocumentItem>
             ))}
@@ -582,7 +574,7 @@ export function ConsolidationStepDocuments({ data, updateData }: ConsolidationSt
         <CustomHeader>
           <CustomTitle>
             <CustomTitleLeft>
-              <PlusIcon />
+              <Plus style={{ width: '1.25rem', height: '1.25rem' }} />
               Custom Documents
             </CustomTitleLeft>
             <AddButton 
@@ -590,7 +582,7 @@ export function ConsolidationStepDocuments({ data, updateData }: ConsolidationSt
               size="sm" 
               onClick={addCustomDocument}
             >
-              <AddButtonIcon />
+              <Plus style={{ width: '1rem', height: '1rem', marginRight: '0.5rem' }} />
               Add Document
             </AddButton>
           </CustomTitle>
@@ -604,17 +596,17 @@ export function ConsolidationStepDocuments({ data, updateData }: ConsolidationSt
             </EmptyState>
           ) : (
             <CustomDocumentsList>
-              {customDocuments.map((doc: any) => (
+              {customDocuments.map((doc) => (
                 <CustomDocumentItem key={doc.id}>
                   <CustomInput
                     placeholder="Document name"
                     value={doc.name}
                     onChange={(e) => updateCustomDocument(doc.id, 'name', e.target.value)}
                   />
-                  <UploadButton variant="outline" size="sm">
-                    <UploadIcon />
+                  <ActionButton className="upload" variant="outline" size="sm">
+                    <Upload style={{ width: '0.75rem', height: '0.75rem', marginRight: '0.25rem' }} />
                     Upload
-                  </UploadButton>
+                  </ActionButton>
                   <RemoveButton 
                     variant="destructive" 
                     size="sm" 

@@ -6,58 +6,61 @@ import { Button } from "./ui/button";
 import { Upload, FileText, Play, ChevronLeft, CheckCircle2 } from "lucide-react";
 import { TrackingProgress } from "./modern-progress";
 
-// Styled Components
+// Responsive styled components with mobile-first approach
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const HeaderSection = styled.div`
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: clamp(1rem, 4vw, 2rem);
 `;
 
 const IconContainer = styled.div`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 4rem;
-  height: 4rem;
+  width: clamp(3rem, 8vw, 4rem);
+  height: clamp(3rem, 8vw, 4rem);
   background-color: #dcfce7;
   border-radius: 50%;
-  margin-bottom: 1rem;
+  margin-bottom: clamp(0.75rem, 2vw, 1rem);
 `;
 
 const CheckIcon = styled(CheckCircle2)`
-  width: 2rem;
-  height: 2rem;
+  width: clamp(1.5rem, 4vw, 2rem);
+  height: clamp(1.5rem, 4vw, 2rem);
   color: #16a34a;
 `;
 
 const HeaderTitle = styled.h2`
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #111827;
-  margin: 0 0 0.5rem 0;
+  font-size: clamp(1.125rem, 3vw, 1.25rem);
+  color: var(--foreground);
+  margin: 0 0 clamp(0.25rem, 1vw, 0.5rem) 0;
 `;
 
 const HeaderSubtitle = styled.p`
-  color: #4b5563;
+  color: var(--muted-foreground);
   margin: 0;
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
 `;
 
 const SummaryGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 1rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(0.75rem, 2vw, 1rem);
   
   @media (min-width: 768px) {
     grid-template-columns: repeat(4, 1fr);
   }
 `;
 
-const SummaryCard = styled(Card)<{ $variant: 'blue' | 'green' | 'purple' | 'orange' }>`
+const SummaryCard = styled(Card)`
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  
   ${props => {
     switch (props.$variant) {
       case 'blue':
@@ -80,18 +83,20 @@ const SummaryCard = styled(Card)<{ $variant: 'blue' | 'green' | 'purple' | 'oran
           background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);
           border: 1px solid #fdba74;
         `;
+      default:
+        return '';
     }
   }}
 `;
 
 const SummaryContent = styled(CardContent)`
-  padding: 1rem;
+  padding: clamp(0.75rem, 3vw, 1rem);
   text-align: center;
 `;
 
-const SummaryValue = styled.div<{ $variant: 'blue' | 'green' | 'purple' | 'orange' }>`
-  font-size: 1.25rem;
-  font-weight: bold;
+const SummaryValue = styled.div`
+  font-size: clamp(1rem, 3vw, 1.25rem);
+  
   ${props => {
     switch (props.$variant) {
       case 'blue':
@@ -102,13 +107,16 @@ const SummaryValue = styled.div<{ $variant: 'blue' | 'green' | 'purple' | 'orang
         return 'color: #7c3aed;';
       case 'orange':
         return 'color: #c2410c;';
+      default:
+        return 'color: var(--foreground);';
     }
   }}
 `;
 
-const SummaryLabel = styled.div<{ $variant: 'blue' | 'green' | 'purple' | 'orange' }>`
-  font-size: 0.875rem;
+const SummaryLabel = styled.div`
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
   margin-top: 0.25rem;
+  
   ${props => {
     switch (props.$variant) {
       case 'blue':
@@ -119,35 +127,33 @@ const SummaryLabel = styled.div<{ $variant: 'blue' | 'green' | 'purple' | 'orang
         return 'color: #9333ea;';
       case 'orange':
         return 'color: #ea580c;';
+      default:
+        return 'color: var(--muted-foreground);';
     }
   }}
 `;
 
 const ReviewCard = styled(Card)`
   border: 1px solid #bfdbfe;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  background-color: var(--card);
 `;
 
 const ReviewHeader = styled(CardHeader)`
   background-color: #eff6ff;
   border-bottom: 1px solid #bfdbfe;
+  padding: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const ReviewTitle = styled(CardTitle)`
-  font-size: 1.125rem;
+  font-size: clamp(1rem, 3vw, 1.125rem);
   color: #1d4ed8;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 `;
 
-const FileIcon = styled(FileText)`
-  width: 1.25rem;
-  height: 1.25rem;
-`;
-
 const ReviewContent = styled(CardContent)`
-  padding: 1.5rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const StyledAccordion = styled(Accordion)`
@@ -155,13 +161,15 @@ const StyledAccordion = styled(Accordion)`
 `;
 
 const AccordionItemStyled = styled(AccordionItem)`
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border);
   border-radius: 0.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: clamp(0.75rem, 2vw, 1rem);
+  background-color: var(--card);
 `;
 
-const AccordionTriggerStyled = styled(AccordionTrigger)<{ $variant: 'blue' | 'green' | 'indigo' }>`
-  padding: 1rem;
+const AccordionTriggerStyled = styled(AccordionTrigger)`
+  padding: clamp(0.75rem, 3vw, 1rem);
+  
   ${props => {
     switch (props.$variant) {
       case 'blue':
@@ -170,6 +178,8 @@ const AccordionTriggerStyled = styled(AccordionTrigger)<{ $variant: 'blue' | 'gr
         return 'color: #15803d;';
       case 'indigo':
         return 'color: #4338ca;';
+      default:
+        return 'color: var(--foreground);';
     }
   }}
   
@@ -181,10 +191,12 @@ const AccordionTriggerStyled = styled(AccordionTrigger)<{ $variant: 'blue' | 'gr
 const TriggerContent = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: clamp(0.5rem, 2vw, 0.75rem);
 `;
 
-const StepBadge = styled(Badge)<{ $variant: 'blue' | 'green' | 'indigo' }>`
+const StepBadge = styled(Badge)`
+  font-size: clamp(0.625rem, 1.5vw, 0.75rem);
+  
   ${props => {
     switch (props.$variant) {
       case 'blue':
@@ -205,31 +217,37 @@ const StepBadge = styled(Badge)<{ $variant: 'blue' | 'green' | 'indigo' }>`
           color: #4338ca;
           border: 1px solid #c7d2fe;
         `;
+      default:
+        return `
+          background-color: var(--muted);
+          color: var(--muted-foreground);
+          border: 1px solid var(--border);
+        `;
     }
   }}
 `;
 
 const StepTitle = styled.span`
-  font-weight: 500;
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
 `;
 
 const AccordionContentStyled = styled(AccordionContent)`
-  padding: 0 1rem 1rem 1rem;
+  padding: 0 clamp(0.75rem, 3vw, 1rem) clamp(0.75rem, 3vw, 1rem) clamp(0.75rem, 3vw, 1rem);
 `;
 
 const ContentSection = styled.div`
-  background-color: #f9fafb;
-  padding: 1rem;
+  background-color: var(--muted);
+  padding: clamp(0.75rem, 3vw, 1rem);
   border-radius: 0.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: clamp(0.75rem, 2vw, 1rem);
 `;
 
 const DetailGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 1rem;
+  grid-template-columns: 1fr;
+  gap: clamp(0.75rem, 2vw, 1rem);
   
   @media (min-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
@@ -238,22 +256,25 @@ const DetailGrid = styled.div`
 
 const MeasurementsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 1rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(0.75rem, 2vw, 1rem);
   
   @media (min-width: 768px) {
     grid-template-columns: repeat(4, 1fr);
   }
 `;
 
-const DetailItem = styled.div``;
+const DetailItem = styled.div`
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
+  line-height: 1.4;
+`;
 
 const DetailLabel = styled.strong`
-  color: #374151;
+  color: var(--foreground);
 `;
 
 const NotSpecified = styled.span`
-  color: #9ca3af;
+  color: var(--muted-foreground);
   font-style: italic;
 `;
 
@@ -264,21 +285,20 @@ const ObjectValues = styled.div`
 `;
 
 const ObjectItem = styled.div`
-  font-size: 0.875rem;
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
 `;
 
 const ObjectKey = styled.span`
-  font-weight: 500;
-  color: #374151;
+  color: var(--foreground);
   text-transform: capitalize;
 `;
 
 const ObjectValue = styled.span`
-  color: #4b5563;
+  color: var(--muted-foreground);
 `;
 
 const HazardousSection = styled.div`
-  padding: 0.75rem;
+  padding: clamp(0.5rem, 2vw, 0.75rem);
   background-color: #fff7ed;
   border: 1px solid #fed7aa;
   border-radius: 0.5rem;
@@ -290,17 +310,20 @@ const HazardousLabel = styled.strong`
 
 const PartiesGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 1.5rem;
+  grid-template-columns: 1fr;
+  gap: clamp(1rem, 3vw, 1.5rem);
   
   @media (min-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
   }
 `;
 
-const PartyCard = styled.div<{ $variant: 'green' | 'purple' | 'blue' | 'orange' | 'teal' }>`
-  padding: 0.75rem;
+const PartyCard = styled.div`
+  padding: clamp(0.5rem, 2vw, 0.75rem);
   border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  background-color: var(--card);
+  
   ${props => {
     switch (props.$variant) {
       case 'green':
@@ -313,13 +336,16 @@ const PartyCard = styled.div<{ $variant: 'green' | 'purple' | 'blue' | 'orange' 
         return 'border: 1px solid #fed7aa;';
       case 'teal':
         return 'border: 1px solid #99f6e4;';
+      default:
+        return '';
     }
   }}
 `;
 
-const PartyTitle = styled.h4<{ $variant: 'green' | 'purple' | 'blue' | 'orange' | 'teal' }>`
-  font-weight: 500;
-  margin: 0 0 0.5rem 0;
+const PartyTitle = styled.h4`
+  margin: 0 0 clamp(0.25rem, 1vw, 0.5rem) 0;
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
+  
   ${props => {
     switch (props.$variant) {
       case 'green':
@@ -332,6 +358,8 @@ const PartyTitle = styled.h4<{ $variant: 'green' | 'purple' | 'blue' | 'orange' 
         return 'color: #c2410c;';
       case 'teal':
         return 'color: #0f766e;';
+      default:
+        return 'color: var(--foreground);';
     }
   }}
 `;
@@ -344,101 +372,97 @@ const DocumentsList = styled.div`
 `;
 
 const DocumentItem = styled.div`
-  font-size: 0.875rem;
-  background-color: white;
-  padding: 0.5rem;
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
+  background-color: var(--card);
+  padding: clamp(0.25rem, 1vw, 0.5rem);
   border-radius: 0.25rem;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border);
 `;
 
 const UploadCard = styled(Card)`
   border: 1px solid #fde68a;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  background-color: var(--card);
 `;
 
 const UploadHeader = styled(CardHeader)`
   background-color: #fffbeb;
   border-bottom: 1px solid #fde68a;
+  padding: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const UploadTitle = styled(CardTitle)`
-  font-size: 1.125rem;
+  font-size: clamp(1rem, 3vw, 1.125rem);
   color: #d97706;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 `;
 
-const UploadIcon = styled(Upload)`
-  width: 1.25rem;
-  height: 1.25rem;
-`;
-
 const UploadContent = styled(CardContent)`
-  padding: 1.5rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const UploadZone = styled.div`
   border: 2px dashed #fde68a;
   border-radius: 0.5rem;
-  padding: 2rem;
+  padding: clamp(1.5rem, 4vw, 2rem);
   text-align: center;
-  background: linear-gradient(to bottom, #fffbeb, white);
+  background: linear-gradient(to bottom, #fffbeb, var(--card));
   cursor: pointer;
   transition: background 0.2s;
   
   &:hover {
-    background: linear-gradient(to bottom, #fef3c7, white);
+    background: linear-gradient(to bottom, #fef3c7, var(--card));
   }
 `;
 
 const UploadIconLarge = styled(Upload)`
-  width: 3rem;
-  height: 3rem;
+  width: clamp(2rem, 6vw, 3rem);
+  height: clamp(2rem, 6vw, 3rem);
   color: #f59e0b;
-  margin: 0 auto 1rem auto;
+  margin: 0 auto clamp(0.75rem, 2vw, 1rem) auto;
 `;
 
 const UploadMainText = styled.h3`
-  font-size: 1.125rem;
-  font-weight: 500;
+  font-size: clamp(1rem, 3vw, 1.125rem);
   color: #d97706;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 clamp(0.25rem, 1vw, 0.5rem) 0;
 `;
 
 const UploadSubText = styled.p`
   color: #d97706;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 clamp(0.25rem, 1vw, 0.5rem) 0;
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
 `;
 
 const UploadHelpText = styled.p`
-  font-size: 0.75rem;
-  color: #6b7280;
+  font-size: clamp(0.625rem, 1.5vw, 0.75rem);
+  color: var(--muted-foreground);
   margin: 0;
 `;
 
 const ActionSection = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 1.5rem;
-  border-top: 1px solid #e5e7eb;
-`;
-
-const BackButton = styled(Button)`
-  background-color: white;
-  border: 1px solid #d1d5db;
-  color: #374151;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: clamp(1rem, 3vw, 1.5rem);
+  border-top: 1px solid var(--border);
   
-  &:hover {
-    background-color: #f9fafb;
+  @media (min-width: 640px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
   }
 `;
 
-const BackIcon = styled(ChevronLeft)`
-  width: 1rem;
-  height: 1rem;
-  margin-right: 0.5rem;
+const BackButton = styled(Button)`
+  background-color: var(--secondary);
+  border: 1px solid var(--border);
+  color: var(--secondary-foreground);
+  
+  &:hover {
+    background-color: var(--muted);
+  }
 `;
 
 const SubmitButton = styled(Button)`
@@ -451,20 +475,8 @@ const SubmitButton = styled(Button)`
   }
 `;
 
-const PlayIcon = styled(Play)`
-  width: 1.25rem;
-  height: 1.25rem;
-  margin-right: 0.5rem;
-`;
-
-interface ConsolidationStepReviewProps {
-  data: any;
-  onSubmit: () => void;
-  onBack: () => void;
-}
-
-export function ConsolidationStepReview({ data, onSubmit, onBack }: ConsolidationStepReviewProps) {
-  const formatValue = (value: any) => {
+export function ConsolidationStepReview({ data, onSubmit, onBack }) {
+  const formatValue = (value) => {
     if (!value || (typeof value === 'object' && Object.keys(value).length === 0)) {
       return <NotSpecified>Not specified</NotSpecified>;
     }
@@ -474,7 +486,7 @@ export function ConsolidationStepReview({ data, onSubmit, onBack }: Consolidatio
           {Object.entries(value).map(([key, val]) => (
             <ObjectItem key={key}>
               <ObjectKey>{key}: </ObjectKey>
-              <ObjectValue>{val as string || 'Not specified'}</ObjectValue>
+              <ObjectValue>{val || 'Not specified'}</ObjectValue>
             </ObjectItem>
           ))}
         </ObjectValues>
@@ -484,13 +496,13 @@ export function ConsolidationStepReview({ data, onSubmit, onBack }: Consolidatio
   };
 
   const progressStages = [
-    { name: "Booking & Preparation", status: "pending" as const, description: "Initial setup and documentation" },
-    { name: "Origin Handling", status: "pending" as const, description: "Collection and consolidation at origin" },
-    { name: "Departure & Transit", status: "pending" as const, description: "Cargo in transit to destination" },
-    { name: "Arrival Notification", status: "pending" as const, description: "Notification of cargo arrival" },
-    { name: "Destination Clearance", status: "pending" as const, description: "Customs clearance process" },
-    { name: "Destination Handling", status: "pending" as const, description: "Final delivery preparations" },
-    { name: "Completion & Settlement", status: "pending" as const, description: "Final documentation and settlement" }
+    { name: "Booking & Preparation", status: "pending"}, 
+    { name: "Origin Handling", status: "pending"},
+    { name: "Departure & Transit", status: "pending"},
+    { name: "Arrival Notification", status: "pending"}, 
+    { name: "Destination Clearance", status: "pending"},
+    { name: "Destination Handling", status: "pending"},
+    { name: "Completion & Settlement", status: "pending"},
   ];
 
   return (
@@ -529,7 +541,7 @@ export function ConsolidationStepReview({ data, onSubmit, onBack }: Consolidatio
 
         <SummaryCard $variant="orange">
           <SummaryContent>
-            <SummaryValue $variant="orange">{data.totalVolume || '0'} cbm</SummaryValue>
+            <SummaryValue $variant="orange">{data.totalVolume || '0'} m³</SummaryValue>
             <SummaryLabel $variant="orange">Total Volume</SummaryLabel>
           </SummaryContent>
         </SummaryCard>
@@ -545,7 +557,7 @@ export function ConsolidationStepReview({ data, onSubmit, onBack }: Consolidatio
       <ReviewCard>
         <ReviewHeader>
           <ReviewTitle>
-            <FileIcon />
+            <FileText style={{ width: '1.25rem', height: '1.25rem' }} />
             Consolidation Details Review
           </ReviewTitle>
         </ReviewHeader>
@@ -565,11 +577,10 @@ export function ConsolidationStepReview({ data, onSubmit, onBack }: Consolidatio
                     <DetailItem><DetailLabel>Template:</DetailLabel> {formatValue(data.template)}</DetailItem>
                     <DetailItem><DetailLabel>Consolidation ID:</DetailLabel> {formatValue(data.consolidationId)}</DetailItem>
                   </DetailGrid>
-                  <DetailItem><DetailLabel>Description:</DetailLabel> {formatValue(data.description)}</DetailItem>
                   <MeasurementsGrid>
                     <DetailItem><DetailLabel>Quantity:</DetailLabel> {formatValue(data.totalQuantity)}</DetailItem>
                     <DetailItem><DetailLabel>Weight:</DetailLabel> {formatValue(data.totalWeight)} kg</DetailItem>
-                    <DetailItem><DetailLabel>Volume:</DetailLabel> {formatValue(data.totalVolume)} cbm</DetailItem>
+                    <DetailItem><DetailLabel>Volume:</DetailLabel> {formatValue(data.totalVolume)} m³</DetailItem>
                     <DetailItem><DetailLabel>Container:</DetailLabel> {formatValue(data.containerSize)}</DetailItem>
                   </MeasurementsGrid>
                   {data.hazardous && (
@@ -643,7 +654,7 @@ export function ConsolidationStepReview({ data, onSubmit, onBack }: Consolidatio
                     <div>
                       <DetailLabel>Custom Documents:</DetailLabel>
                       <DocumentsList>
-                        {data.customDocuments.map((doc: any, index: number) => (
+                        {data.customDocuments.map((doc, index) => (
                           <DocumentItem key={index}>
                             {doc.name || 'Unnamed document'}
                           </DocumentItem>
@@ -663,7 +674,7 @@ export function ConsolidationStepReview({ data, onSubmit, onBack }: Consolidatio
       <UploadCard>
         <UploadHeader>
           <UploadTitle>
-            <UploadIcon />
+            <Upload style={{ width: '1.25rem', height: '1.25rem' }} />
             Final Document Upload
           </UploadTitle>
         </UploadHeader>
@@ -685,7 +696,7 @@ export function ConsolidationStepReview({ data, onSubmit, onBack }: Consolidatio
           variant="outline" 
           onClick={onBack}
         >
-          <BackIcon />
+          <ChevronLeft style={{ width: '1rem', height: '1rem', marginRight: '0.5rem' }} />
           Back to Documents
         </BackButton>
         
@@ -693,7 +704,7 @@ export function ConsolidationStepReview({ data, onSubmit, onBack }: Consolidatio
           onClick={onSubmit}
           size="lg"
         >
-          <PlayIcon />
+          <Play style={{ width: '1.25rem', height: '1.25rem', marginRight: '0.5rem' }} />
           Create Consolidation
         </SubmitButton>
       </ActionSection>

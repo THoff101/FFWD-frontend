@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { ModernSidebar } from "./modern-sidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -18,52 +18,65 @@ import {
   BarChart3,
   Clock,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Loader2
 } from "lucide-react";
+import { fetchConsolidations, mockIndividualJobs } from "../data/mock-jobs";
 
-// Styled Components
+// Responsive styled components with mobile-first approach
 const PageContainer = styled.div`
   min-height: 100vh;
-  background-color: #f9fafb;
-  display: flex;
-`;
-
-const MainContent = styled.div`
-  flex: 1;
+  background-color: var(--background);
   display: flex;
   flex-direction: column;
+  width: 100%;
 `;
 
 const Header = styled.div`
-  background-color: white;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 1.5rem;
+  background-color: var(--card);
+  border-bottom: 1px solid var(--border);
+  padding: clamp(1rem, 3vw, 1.5rem);
+  margin-left: clamp(1rem, 3vw, 0);
+  
+  @media (max-width: 767px) {
+    margin-left: 0;
+    margin-top: 4rem; /* Account for mobile menu button */
+  }
 `;
 
 const HeaderContent = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 1rem;
+  
+  @media (min-width: 640px) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0;
+  }
 `;
 
-const HeaderText = styled.div``;
+const HeaderText = styled.div`
+  min-width: 0; // Prevents overflow
+`;
 
 const Title = styled.h1`
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #111827;
+  font-size: clamp(1.25rem, 4vw, 1.5rem);
+  color: var(--foreground);
   margin: 0;
 `;
 
 const Subtitle = styled.p`
-  color: #6b7280;
-  margin-top: 0.25rem;
-  margin-bottom: 0;
+  color: var(--muted-foreground);
+  margin: 0.25rem 0 0 0;
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
 `;
 
 const ContentArea = styled.div`
   flex: 1;
-  padding: 1.5rem;
+  padding: clamp(0.75rem, 3vw, 1.5rem);
+  background-color: var(--muted);
 `;
 
 const ContentWrapper = styled.div`
@@ -71,22 +84,32 @@ const ContentWrapper = styled.div`
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const StatsGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1rem;
+  gap: clamp(0.75rem, 2vw, 1rem);
   
-  @media (min-width: 768px) {
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (min-width: 1024px) {
     grid-template-columns: repeat(3, 1fr);
   }
 `;
 
 const StatsCard = styled(Card)`
-  border: 1px solid;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  border: 1px solid var(--border);
+  background-color: var(--card);
+  transition: transform 0.2s, box-shadow 0.2s;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
   
   &.blue {
     border-color: #bfdbfe;
@@ -102,7 +125,7 @@ const StatsCard = styled(Card)`
 `;
 
 const StatsContent = styled(CardContent)`
-  padding: 1rem;
+  padding: clamp(0.75rem, 3vw, 1rem);
 `;
 
 const StatsInner = styled.div`
@@ -111,108 +134,73 @@ const StatsInner = styled.div`
   justify-content: space-between;
 `;
 
-const StatsTextContainer = styled.div``;
-
 const StatLabel = styled.p`
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
   margin: 0;
   
-  &.blue {
-    color: #2563eb;
-  }
-  
-  &.green {
-    color: #16a34a;
-  }
-  
-  &.purple {
-    color: #9333ea;
-  }
+  &.blue { color: #2563eb; }
+  &.green { color: #16a34a; }
+  &.purple { color: #9333ea; }
 `;
 
 const StatValue = styled.p`
-  font-size: 1.5rem;
-  font-weight: bold;
+  font-size: clamp(1.25rem, 4vw, 1.5rem);
   margin: 0;
   
-  &.blue {
-    color: #1d4ed8;
-  }
-  
-  &.green {
-    color: #15803d;
-  }
-  
-  &.purple {
-    color: #7c3aed;
-  }
+  &.blue { color: #1d4ed8; }
+  &.green { color: #15803d; }
+  &.purple { color: #7c3aed; }
 `;
 
 const IconContainer = styled.div`
-  width: 2.5rem;
-  height: 2.5rem;
+  width: clamp(2rem, 6vw, 2.5rem);
+  height: clamp(2rem, 6vw, 2.5rem);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   
-  &.blue {
-    background-color: #dbeafe;
-  }
-  
-  &.green {
-    background-color: #dcfce7;
-  }
-  
-  &.purple {
-    background-color: #f3e8ff;
-  }
+  &.blue { background-color: #dbeafe; }
+  &.green { background-color: #dcfce7; }
+  &.purple { background-color: #f3e8ff; }
 `;
 
 const StyledIcon = styled.div`
-  width: 1.25rem;
-  height: 1.25rem;
+  width: clamp(1rem, 3vw, 1.25rem);
+  height: clamp(1rem, 3vw, 1.25rem);
   
-  &.blue {
-    color: #2563eb;
-  }
-  
-  &.green {
-    color: #16a34a;
-  }
-  
-  &.purple {
-    color: #9333ea;
-  }
+  &.blue { color: #2563eb; }
+  &.green { color: #16a34a; }
+  &.purple { color: #9333ea; }
 `;
 
 const FiltersCard = styled(Card)`
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  border: 1px solid var(--border);
+  background-color: var(--card);
 `;
 
 const FiltersHeader = styled(CardHeader)`
-  background-color: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
+  background-color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  padding: clamp(0.75rem, 3vw, 1rem);
 `;
 
 const FiltersTitle = styled(CardTitle)`
-  font-size: 1.125rem;
-  color: #111827;
+  font-size: clamp(1rem, 3vw, 1.125rem);
+  color: var(--foreground);
   display: flex;
   align-items: center;
   gap: 0.5rem;
 `;
 
 const FiltersContent = styled(CardContent)`
-  padding: 1.5rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const FiltersRow = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: clamp(0.75rem, 2vw, 1rem);
   
   @media (min-width: 768px) {
     flex-direction: row;
@@ -221,6 +209,7 @@ const FiltersRow = styled.div`
 
 const SearchContainer = styled.div`
   flex: 1;
+  min-width: 0;
 `;
 
 const SearchWrapper = styled.div`
@@ -228,172 +217,163 @@ const SearchWrapper = styled.div`
 `;
 
 const SearchIcon = styled(Search)`
-  width: 1rem;
-  height: 1rem;
-  color: #9ca3af;
+  width: clamp(0.875rem, 2.5vw, 1rem);
+  height: clamp(0.875rem, 2.5vw, 1rem);
+  color: var(--muted-foreground);
   position: absolute;
-  left: 0.75rem;
+  left: clamp(0.5rem, 2vw, 0.75rem);
   top: 50%;
   transform: translateY(-50%);
 `;
 
 const SearchInput = styled(Input)`
-  padding-left: 2.5rem;
-  background-color: white;
-  border: 1px solid #d1d5db;
+  padding-left: clamp(2rem, 6vw, 2.5rem);
+  background-color: var(--input-background);
+  border: 1px solid var(--border);
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
+  min-height: clamp(2.25rem, 6vw, 2.5rem);
   
   &:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 1px #3b82f6;
+    border-color: var(--ring);
+    box-shadow: 0 0 0 1px var(--ring);
   }
 `;
 
 const SelectContainer = styled.div`
-  width: 12rem;
-`;
-
-const StyledSelect = styled(Select)``;
-
-const StyledSelectTrigger = styled(SelectTrigger)`
-  background-color: white;
-  border: 1px solid #d1d5db;
+  width: 100%;
   
-  &:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 1px #3b82f6;
+  @media (min-width: 768px) {
+    width: clamp(10rem, 20vw, 12rem);
   }
 `;
 
 const FilterButton = styled(Button)`
-  background-color: white;
-  border: 1px solid #d1d5db;
-  color: #374151;
+  background-color: var(--secondary);
+  border: 1px solid var(--border);
+  color: var(--secondary-foreground);
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
+  min-height: clamp(2.25rem, 6vw, 2.5rem);
+  white-space: nowrap;
   
   &:hover {
-    background-color: #f9fafb;
+    background-color: var(--muted);
   }
 `;
 
 const TableCard = styled.div`
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  background-color: white;
+  border: 1px solid var(--border);
+  background-color: var(--card);
   border-radius: 0.75rem;
   overflow: hidden;
 `;
 
 const TableHeaderSection = styled.div`
-  background-color: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 1.5rem;
+  background-color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  padding: clamp(1rem, 3vw, 1.5rem);
 `;
 
 const TableTitle = styled.h3`
-  font-size: 1.125rem;
-  color: #111827;
+  font-size: clamp(1rem, 3vw, 1.125rem);
+  color: var(--foreground);
   margin: 0;
-  font-weight: 600;
 `;
 
 const TableWrapper = styled.div`
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch; // Smooth scrolling on iOS
 `;
 
 const StyledTable = styled(Table)`
   width: 100%;
-`;
-
-const StyledTableHeader = styled(TableHeader)``;
-
-const StyledTableHeaderRow = styled(TableRow)`
-  background-color: #f9fafb;
+  min-width: 700px; // Minimum width for proper table layout
 `;
 
 const StyledTableHead = styled(TableHead)`
-  font-weight: 500;
-  color: #374151;
-  padding: 0.75rem 1rem;
+  color: var(--muted-foreground);
+  padding: clamp(0.5rem, 2vw, 0.75rem) clamp(0.75rem, 2vw, 1rem);
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
+  white-space: nowrap;
 `;
 
 const StyledTableRow = styled(TableRow)`
   &:hover {
-    background-color: #f9fafb;
+    background-color: var(--muted);
   }
   
   transition: background-color 0.2s;
+`;
+
+const StyledTableCell = styled(TableCell)`
+  padding: clamp(0.5rem, 2vw, 0.75rem) clamp(0.75rem, 2vw, 1rem);
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
 `;
 
 const CellContent = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-`;
-
-const JobIcon = styled.div`
-  width: 1rem;
-  height: 1rem;
-  background-color: #d1d5db;
-  border-radius: 0.25rem;
+  flex-wrap: wrap;
 `;
 
 const JobIdText = styled.span`
-  color: #111827;
+  color: var(--foreground);
+  font-weight: 500;
 `;
 
 const JobBadge = styled(Badge)`
   background-color: #dbeafe;
   color: #1d4ed8;
   border: 1px solid #bfdbfe;
-  font-size: 0.75rem;
+  font-size: clamp(0.625rem, 1.5vw, 0.75rem);
+  white-space: nowrap;
 `;
 
 const TemplateText = styled.span`
-  color: #374151;
+  color: var(--foreground);
 `;
 
 const POText = styled.div`
-  font-size: 0.75rem;
-  color: #6b7280;
+  font-size: clamp(0.625rem, 1.5vw, 0.75rem);
+  color: var(--muted-foreground);
   margin-top: 0.25rem;
-`;
-
-const StageText = styled.span`
-  color: #374151;
 `;
 
 const StatusContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-`;
-
-const StatusIcon = styled.div`
-  width: 1rem;
-  height: 1rem;
+  flex-wrap: wrap;
 `;
 
 const DetailsContainer = styled.div`
-  font-size: 0.875rem;
-  color: #4b5563;
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
+  color: var(--muted-foreground);
 `;
 
 const WeightText = styled.div`
-  font-size: 0.75rem;
-  color: #6b7280;
+  font-size: clamp(0.625rem, 1.5vw, 0.75rem);
+  color: var(--muted-foreground);
 `;
 
 const ParentText = styled.div`
-  font-size: 0.75rem;
-  color: #6b7280;
+  font-size: clamp(0.625rem, 1.5vw, 0.75rem);
+  color: var(--muted-foreground);
 `;
 
 const ActionsContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: clamp(0.25rem, 1vw, 0.5rem);
+  flex-wrap: wrap;
 `;
 
 const ActionButton = styled(Button)`
+  font-size: clamp(0.625rem, 1.5vw, 0.75rem);
+  min-height: clamp(1.75rem, 4vw, 2rem);
+  padding: clamp(0.25rem, 1vw, 0.5rem) clamp(0.5rem, 2vw, 0.75rem);
+  white-space: nowrap;
+  
   &.view {
     background-color: #eff6ff;
     border: 1px solid #bfdbfe;
@@ -405,12 +385,12 @@ const ActionButton = styled(Button)`
   }
   
   &.edit {
-    background-color: #f9fafb;
-    border: 1px solid #e5e7eb;
-    color: #374151;
+    background-color: var(--secondary);
+    border: 1px solid var(--border);
+    color: var(--secondary-foreground);
     
     &:hover {
-      background-color: #f3f4f6;
+      background-color: var(--muted);
     }
   }
   
@@ -425,100 +405,103 @@ const ActionButton = styled(Button)`
   }
 `;
 
-const ButtonIcon = styled.div`
-  width: 0.75rem;
-  height: 0.75rem;
-  margin-right: 0.25rem;
-`;
-
 const CreateButton = styled(Button)`
-  background-color: #2563eb;
-  color: white;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
+  min-height: clamp(2.25rem, 6vw, 2.5rem);
+  white-space: nowrap;
   
   &:hover {
-    background-color: #1d4ed8;
+    background-color: var(--primary);
+    opacity: 0.9;
   }
 `;
 
-const CreateButtonIcon = styled(Plus)`
-  width: 1rem;
-  height: 1rem;
-  margin-right: 0.5rem;
+const LoadingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  gap: 0.5rem;
+  color: var(--muted-foreground);
 `;
 
-interface JobsPageProps {
-  onCreateNew: () => void;
-  onViewConsolidation: (data: any) => void;
-}
+const LoadingSpinner = styled(Loader2)`
+  animation: spin 1s linear infinite;
+  
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+`;
 
-export function JobsPage({ onCreateNew, onViewConsolidation }: JobsPageProps) {
+export function JobsPage() {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [templateFilter, setTemplateFilter] = useState("all-templates");
   const [statusFilter, setStatusFilter] = useState("all-statuses");
+  const [jobs, setJobs] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [stats, setStats] = useState({
+    activeJobs: 0,
+    consolidations: 0,
+    completed: 0
+  });
 
-  // Mock data
-  const jobs = [
-    {
-      id: "CONS-789123",
-      type: "consolidation",
-      template: "Consolidation",
-      currentStage: "Origin Handling",
-      status: "In Progress",
-      origin: "Shanghai",
-      destination: "Los Angeles",
-      totalJobs: 3,
-      createdAt: "2025-01-15",
-      weight: "2100 kg"
-    },
-    {
-      id: "JOB-123456",
-      template: "Import LCL",
-      currentStage: "Origin Handling", 
-      status: "In Progress",
-      poNumber: "PO-2025-001",
-      parentConsolidation: "CONS-789123"
-    },
-    {
-      id: "JOB-123457",
-      template: "Import LCL",
-      currentStage: "Origin Handling",
-      status: "In Progress", 
-      poNumber: "PO-2025-002",
-      parentConsolidation: "CONS-789123"
-    },
-    {
-      id: "JOB-456789",
-      template: "Export FCL",
-      currentStage: "Completion",
-      status: "Completed",
-      poNumber: "PO-2024-003"
-    },
-    {
-      id: "CONS-234567",
-      type: "consolidation", 
-      template: "Consolidation",
-      currentStage: "Booking & Preparation",
-      status: "In Progress",
-      totalJobs: 2,
-      createdAt: "2025-01-20"
-    }
-  ];
+  useEffect(() => {
+    loadJobs();
+  }, []);
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'In Progress':
-        return <StatusIcon><Clock style={{color: '#2563eb', width: '1rem', height: '1rem'}} /></StatusIcon>;
-      case 'Completed':
-        return <StatusIcon><CheckCircle2 style={{color: '#16a34a', width: '1rem', height: '1rem'}} /></StatusIcon>;
-      case 'Issue':
-        return <StatusIcon><AlertCircle style={{color: '#dc2626', width: '1rem', height: '1rem'}} /></StatusIcon>;
-      default:
-        return <StatusIcon><Clock style={{color: '#9ca3af', width: '1rem', height: '1rem'}} /></StatusIcon>;
+  const loadJobs = async () => {
+    setIsLoading(true);
+    try {
+      const consolidations = await fetchConsolidations();
+      
+      // Combine consolidations and individual jobs
+      const allJobs = [
+        ...consolidations.map(cons => ({
+          ...cons,
+          type: 'consolidation'
+        })),
+        ...mockIndividualJobs
+      ];
+      
+      setJobs(allJobs);
+      
+      // Calculate stats
+      const activeJobs = allJobs.filter(job => job.status === 'In Progress').length;
+      const consolidationCount = consolidations.length;
+      const completedJobs = allJobs.filter(job => job.status === 'Completed').length;
+      
+      setStats({
+        activeJobs,
+        consolidations: consolidationCount,
+        completed: completedJobs
+      });
+    } catch (error) {
+      console.error('Error loading jobs:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const getStatusBadge = (status: string) => {
+  const getStatusIcon = (status) => {
+    const iconStyle = { width: '1rem', height: '1rem' };
+    
+    switch (status) {
+      case 'In Progress':
+        return <Clock style={{...iconStyle, color: '#2563eb'}} />;
+      case 'Completed':
+        return <CheckCircle2 style={{...iconStyle, color: '#16a34a'}} />;
+      case 'Issue':
+        return <AlertCircle style={{...iconStyle, color: '#dc2626'}} />;
+      default:
+        return <Clock style={{...iconStyle, color: '#9ca3af'}} />;
+    }
+  };
+
+  const getStatusBadge = (status) => {
     switch (status) {
       case 'In Progress':
         return <Badge style={{backgroundColor: '#dbeafe', color: '#1d4ed8', border: '1px solid #bfdbfe'}}>In Progress</Badge>;
@@ -531,46 +514,42 @@ export function JobsPage({ onCreateNew, onViewConsolidation }: JobsPageProps) {
     }
   };
 
-  const handleViewJob = (job: any) => {
+  const handleViewJob = (job) => {
     if (job.type === 'consolidation') {
-      // Mock consolidation data
-      const consolidationData = {
-        id: job.id,
-        template: job.template,
-        status: job.status,
-        currentStage: 2,
-        origin: { city: job.origin, port: job.origin + " Port" },
-        destination: { city: job.destination, port: job.destination + " Port" },
-        totalWeight: job.weight,
-        individualJobs: [
-          {
-            id: 'JOB-123456',
-            poNumber: 'PO-2024-001',
-            template: 'Import LCL',
-            status: 'In Progress',
-            currentStage: 2
-          },
-          {
-            id: 'JOB-123457', 
-            poNumber: 'PO-2024-002',
-            template: 'Import LCL',
-            status: 'In Progress',
-            currentStage: 2
-          }
-        ],
-        createdAt: new Date().toISOString()
-      };
-      onViewConsolidation(consolidationData);
+      navigate(`/consolidation/${job.id}`);
+    } else {
+      navigate(`/job/${job.id}`);
     }
   };
 
+  // Filter jobs based on search and filters
+  const filteredJobs = jobs.filter(job => {
+    const matchesSearch = searchTerm === "" || 
+      job.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (job.poNumber && job.poNumber.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    const matchesTemplate = templateFilter === "all-templates" || 
+      job.template?.toLowerCase().includes(templateFilter.replace('-', ' '));
+    
+    const matchesStatus = statusFilter === "all-statuses" || 
+      job.status?.toLowerCase().replace(' ', '-') === statusFilter;
+    
+    return matchesSearch && matchesTemplate && matchesStatus;
+  });
+
+  if (isLoading) {
+    return (
+      <PageContainer>
+        <LoadingContainer>
+          <LoadingSpinner />
+          Loading jobs and consolidations...
+        </LoadingContainer>
+      </PageContainer>
+    );
+  }
+
   return (
     <PageContainer>
-      {/* Sidebar */}
-      <ModernSidebar currentPage="jobs" />
-      
-      {/* Main Content */}
-      <MainContent>
         {/* Header */}
         <Header>
           <HeaderContent>
@@ -578,9 +557,17 @@ export function JobsPage({ onCreateNew, onViewConsolidation }: JobsPageProps) {
               <Title>Jobs & Consolidations</Title>
               <Subtitle>Track and manage all freight shipments</Subtitle>
             </HeaderText>
-            <CreateButton onClick={onCreateNew}>
-              <CreateButtonIcon />
+            {/* <CreateButton onClick={() => navigate('/create')}>
+              <Plus  />
               Add New Shipment
+            </CreateButton> */}
+            <CreateButton onClick={() => navigate('/create')}>
+              <Plus style={{width: '1rem', height: '1rem', marginRight: '0.5rem'}} />
+              Create Consolidation
+            </CreateButton>
+            <CreateButton onClick={() => navigate('/job/create')}>
+              <Plus style={{width: '1rem', height: '1rem', marginRight: '0.5rem'}} />
+              Create Standalone Job
             </CreateButton>
           </HeaderContent>
         </Header>
@@ -593,10 +580,10 @@ export function JobsPage({ onCreateNew, onViewConsolidation }: JobsPageProps) {
               <StatsCard className="blue">
                 <StatsContent>
                   <StatsInner>
-                    <StatsTextContainer>
+                    <div>
                       <StatLabel className="blue">Active Jobs</StatLabel>
-                      <StatValue className="blue">12</StatValue>
-                    </StatsTextContainer>
+                      <StatValue className="blue">{stats.activeJobs}</StatValue>
+                    </div>
                     <IconContainer className="blue">
                       <StyledIcon className="blue">
                         <Package />
@@ -609,10 +596,10 @@ export function JobsPage({ onCreateNew, onViewConsolidation }: JobsPageProps) {
               <StatsCard className="green">
                 <StatsContent>
                   <StatsInner>
-                    <StatsTextContainer>
+                    <div>
                       <StatLabel className="green">Consolidations</StatLabel>
-                      <StatValue className="green">3</StatValue>
-                    </StatsTextContainer>
+                      <StatValue className="green">{stats.consolidations}</StatValue>
+                    </div>
                     <IconContainer className="green">
                       <StyledIcon className="green">
                         <BarChart3 />
@@ -625,10 +612,10 @@ export function JobsPage({ onCreateNew, onViewConsolidation }: JobsPageProps) {
               <StatsCard className="purple">
                 <StatsContent>
                   <StatsInner>
-                    <StatsTextContainer>
+                    <div>
                       <StatLabel className="purple">Completed</StatLabel>
-                      <StatValue className="purple">45</StatValue>
-                    </StatsTextContainer>
+                      <StatValue className="purple">{stats.completed}</StatValue>
+                    </div>
                     <IconContainer className="purple">
                       <StyledIcon className="purple">
                         <CheckCircle2 />
@@ -661,10 +648,10 @@ export function JobsPage({ onCreateNew, onViewConsolidation }: JobsPageProps) {
                   </SearchContainer>
                   
                   <SelectContainer>
-                    <StyledSelect value={templateFilter} onValueChange={setTemplateFilter}>
-                      <StyledSelectTrigger>
+                    <Select value={templateFilter} onValueChange={setTemplateFilter}>
+                      <SelectTrigger>
                         <SelectValue placeholder="All Templates" />
-                      </StyledSelectTrigger>
+                      </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all-templates">All Templates</SelectItem>
                         <SelectItem value="consolidation">Consolidation</SelectItem>
@@ -672,21 +659,21 @@ export function JobsPage({ onCreateNew, onViewConsolidation }: JobsPageProps) {
                         <SelectItem value="export-fcl">Export FCL</SelectItem>
                         <SelectItem value="air-export">Air Export</SelectItem>
                       </SelectContent>
-                    </StyledSelect>
+                    </Select>
                   </SelectContainer>
 
                   <SelectContainer>
-                    <StyledSelect value={statusFilter} onValueChange={setStatusFilter}>
-                      <StyledSelectTrigger>
+                    <Select value={statusFilter} onValueChange={setStatusFilter}>
+                      <SelectTrigger>
                         <SelectValue placeholder="All Statuses" />
-                      </StyledSelectTrigger>
+                      </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all-statuses">All Statuses</SelectItem>
                         <SelectItem value="in-progress">In Progress</SelectItem>
                         <SelectItem value="completed">Completed</SelectItem>
                         <SelectItem value="issue">Issue</SelectItem>
                       </SelectContent>
-                    </StyledSelect>
+                    </Select>
                   </SelectContainer>
 
                   <FilterButton variant="outline">
@@ -699,68 +686,76 @@ export function JobsPage({ onCreateNew, onViewConsolidation }: JobsPageProps) {
             {/* Jobs Table */}
             <TableCard>
               <TableHeaderSection>
-                <TableTitle>All Jobs & Consolidations</TableTitle>
+                <TableTitle>All Jobs & Consolidations ({filteredJobs.length})</TableTitle>
               </TableHeaderSection>
               <TableWrapper>
                 <StyledTable>
-                  <StyledTableHeader>
-                    <StyledTableHeaderRow>
+                  <TableHeader>
+                    <TableRow>
                       <StyledTableHead>Job/Consolidation ID</StyledTableHead>
                       <StyledTableHead>Template</StyledTableHead>
                       <StyledTableHead>Current Stage</StyledTableHead>
                       <StyledTableHead>Status</StyledTableHead>
                       <StyledTableHead>Details</StyledTableHead>
                       <StyledTableHead>Actions</StyledTableHead>
-                    </StyledTableHeaderRow>
-                  </StyledTableHeader>
+                    </TableRow>
+                  </TableHeader>
                   <TableBody>
-                    {jobs.map((job) => (
+                    {filteredJobs.map((job) => (
                       <StyledTableRow key={job.id}>
-                        <TableCell>
+                        <StyledTableCell>
                           <CellContent>
                             {job.type === 'consolidation' ? (
                               <Package style={{width: '1rem', height: '1rem', color: '#2563eb'}} />
                             ) : (
-                              <JobIcon />
+                              <div style={{
+                                width: '1rem',
+                                height: '1rem',
+                                backgroundColor: '#d1d5db',
+                                borderRadius: '0.25rem'
+                              }} />
                             )}
                             <JobIdText>{job.id}</JobIdText>
-                            {job.type === 'consolidation' && (
+                            {job.type === 'consolidation' && job.totalJobs && (
                               <JobBadge variant="outline">
                                 {job.totalJobs} jobs
                               </JobBadge>
                             )}
                           </CellContent>
-                        </TableCell>
-                        <TableCell>
+                        </StyledTableCell>
+                        <StyledTableCell>
                           <TemplateText>{job.template}</TemplateText>
                           {job.poNumber && (
                             <POText>PO: {job.poNumber}</POText>
                           )}
-                        </TableCell>
-                        <TableCell>
-                          <StageText>{job.currentStage}</StageText>
-                        </TableCell>
-                        <TableCell>
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          <span>{job.currentStage || 'Stage ' + (job.currentStage || 1)}</span>
+                        </StyledTableCell>
+                        <StyledTableCell>
                           <StatusContainer>
                             {getStatusIcon(job.status)}
                             {getStatusBadge(job.status)}
                           </StatusContainer>
-                        </TableCell>
-                        <TableCell>
+                        </StyledTableCell>
+                        <StyledTableCell>
                           {job.type === 'consolidation' ? (
                             <DetailsContainer>
-                              <div>{job.origin} → {job.destination}</div>
-                              <WeightText>{job.weight}</WeightText>
+                              <div>{job.origin?.city} → {job.destination?.city}</div>
+                              <WeightText>{job.totalWeight}</WeightText>
                             </DetailsContainer>
                           ) : (
                             <DetailsContainer>
-                              {job.parentConsolidation && (
-                                <ParentText>Part of {job.parentConsolidation}</ParentText>
+                              {job.consolidationId && (
+                                <ParentText>Part of {job.consolidationId}</ParentText>
+                              )}
+                              {job.cargo?.description && (
+                                <div>{job.cargo.description}</div>
                               )}
                             </DetailsContainer>
                           )}
-                        </TableCell>
-                        <TableCell>
+                        </StyledTableCell>
+                        <StyledTableCell>
                           <ActionsContainer>
                             <ActionButton 
                               className="view"
@@ -768,9 +763,7 @@ export function JobsPage({ onCreateNew, onViewConsolidation }: JobsPageProps) {
                               size="sm"
                               onClick={() => handleViewJob(job)}
                             >
-                              <ButtonIcon>
-                                <Eye />
-                              </ButtonIcon>
+                              <Eye style={{width: '0.75rem', height: '0.75rem', marginRight: '0.25rem'}} />
                               View
                             </ActionButton>
                             <ActionButton 
@@ -778,9 +771,7 @@ export function JobsPage({ onCreateNew, onViewConsolidation }: JobsPageProps) {
                               variant="outline" 
                               size="sm"
                             >
-                              <ButtonIcon>
-                                <Edit />
-                              </ButtonIcon>
+                              <Edit style={{width: '0.75rem', height: '0.75rem', marginRight: '0.25rem'}} />
                               Edit
                             </ActionButton>
                             {job.status === 'Completed' && (
@@ -793,7 +784,7 @@ export function JobsPage({ onCreateNew, onViewConsolidation }: JobsPageProps) {
                               </ActionButton>
                             )}
                           </ActionsContainer>
-                        </TableCell>
+                        </StyledTableCell>
                       </StyledTableRow>
                     ))}
                   </TableBody>
@@ -802,7 +793,6 @@ export function JobsPage({ onCreateNew, onViewConsolidation }: JobsPageProps) {
             </TableCard>
           </ContentWrapper>
         </ContentArea>
-      </MainContent>
     </PageContainer>
   );
 }
