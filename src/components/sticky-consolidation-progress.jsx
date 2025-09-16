@@ -344,9 +344,9 @@ export function StickyConsolidationProgress({
       const currentScrollY = window.scrollY;
       
       // Auto-collapse when scrolling down past certain point
-      // if (currentScrollY > 100 && currentScrollY > lastScrollY) {
-      //   setIsCollapsed(true);
-      // }
+      if (currentScrollY > 300 && currentScrollY > lastScrollY) {
+        setIsCollapsed(true);
+      }
       
       lastScrollY = currentScrollY;
     };

@@ -930,11 +930,11 @@ export function ConsolidationDetailsPage() {
                 <DocumentsContent>
                   <DocumentsList>
                     {[
-                      { name: "MBL (Master Bill of Lading)", status: "Pending", color: "yellow" },
+                      { name: "MBL (Master Bill of Lading)", status: "Missing", color: "red" },
+                      { name: "Customs Entry", status: "Missing", color: "red" },
                       { name: "LCL Manifest", status: "Pending", color: "yellow" },
                       { name: "Delivery Order LCL", status: "Generated", color: "green" },
-                      { name: "Consolidation Invoice", status: "Pending", color: "yellow" },
-                      { name: "Customs Entry", status: "Missing", color: "red" }
+                      { name: "Consolidation Invoice", status: "Pending", color: "yellow" }
                     ].map((doc, index) => (
                       <DocumentCard key={index}>
                         <DocumentName>{doc.name}</DocumentName>

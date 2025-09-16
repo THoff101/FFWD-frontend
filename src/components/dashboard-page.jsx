@@ -571,7 +571,7 @@ export function DashboardPage() {
   // Collapsed state for activity groups
   const groupKeys = Object.keys(groupedActivity);
   const [collapsedGroups, setCollapsedGroups] = useState(() =>
-    groupKeys.reduce((acc, key) => ({ ...acc, [key]: false }), {})
+    groupKeys.reduce((acc, key) => ({ ...acc, [key]: true }), {})
   );
 
   const toggleGroup = (key) => {
@@ -602,7 +602,7 @@ export function DashboardPage() {
                 Here's what's happening with your freight forwarding operations today.
               </WelcomeSubtitle>
             </HeaderLeft>
-            <HeaderActions>
+            {/* <HeaderActions>
               <CreateButton onClick={() => navigate('/create')}>
                 <Plus style={{width: '1rem', height: '1rem', marginRight: '0.5rem'}} />
                 New Consolidation
@@ -611,7 +611,7 @@ export function DashboardPage() {
                 <Package style={{width: '1rem', height: '1rem', marginRight: '0.5rem'}} />
                 View Jobs
               </ViewJobsButton>
-            </HeaderActions>
+            </HeaderActions> */}
           </HeaderContent>
         </Header>
 

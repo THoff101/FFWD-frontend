@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import styled from "styled-components";
 import { ModernProgress } from "./modern-progress";
 import { useConsolidation } from "../contexts/consolidation-context";
@@ -240,10 +240,10 @@ export function ConsolidationCreationProcess({ isLoading = false }) {
     individualJobs: []
   });
   const [stepValidation, setStepValidation] = useState({
-    1: false,
-    2: false,
-    3: false,
-    4: false
+    1: true,
+    2: true,
+    3: true,
+    4: true
   });
 
   const stepLabels = ["Basics", "Parties & Locations", "Dates & Documents", "Review & Submit"];
@@ -318,7 +318,7 @@ export function ConsolidationCreationProcess({ isLoading = false }) {
                 <BackButton
                   variant="ghost"
                   size="sm"
-                  onClick={() => navigate('/jobs')}
+                  onClick={() => window.location.href = "/jobs"}
                   disabled={isLoading}
                 >
                   <IconWrapper>

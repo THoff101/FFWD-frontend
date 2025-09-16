@@ -10,6 +10,7 @@ import { fetchJobById } from "../data/mock-jobs";
 import { 
   ArrowLeft,
   Play, 
+  Pause,
   Edit, 
   FileText, 
   Upload, 
@@ -20,6 +21,106 @@ import {
   History,
   ExternalLink
 } from "lucide-react";
+// --- Tasks Section styles (mirroring consolidation) ---
+const TasksSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.5rem, 2vw, 0.75rem);
+`;
+
+const TasksTitle = styled.h4`
+  color: #1e40af;
+  margin: 0;
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
+`;
+
+const TasksGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(0.5rem, 2vw, 0.75rem);
+  
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+`;
+
+const TaskCard = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: clamp(0.5rem, 2vw, 0.75rem);
+  background-color: var(--card);
+  border-radius: 0.5rem;
+  border: 1px solid #bfdbfe;
+  
+  @media (min-width: 640px) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+`;
+
+const TaskLeft = styled.div`
+  display: flex;
+  align-items: center;
+  gap: clamp(0.5rem, 2vw, 0.75rem);
+  flex: 1;
+  min-width: 0;
+`;
+
+const TaskDot = styled.div`
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background-color: ${props => props.$urgent ? '#ef4444' : '#eab308'};
+  flex-shrink: 0;
+`;
+
+const TaskName = styled.span`
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
+  color: var(--foreground);
+  flex: 1;
+  min-width: 0;
+`;
+
+const UrgentBadge = styled(Badge)`
+  background-color: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  font-size: clamp(0.625rem, 1.5vw, 0.75rem);
+  white-space: nowrap;
+`;
+
+const TaskActions = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+`;
+
+const TaskButton = styled(Button)`
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
+  white-space: nowrap;
+  
+  &.generate {
+    background-color: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1d4ed8;
+    
+    &:hover {
+      background-color: #dbeafe;
+    }
+  }
+  
+  &.upload {
+    background-color: var(--secondary);
+    border: 1px solid var(--border);
+    color: var(--secondary-foreground);
+    
+    &:hover {
+      background-color: var(--muted);
+    }
+  }
+`;
 import { jobStages } from "../data/job-stages";
 
 // Responsive styled components with mobile-first approach
@@ -276,6 +377,17 @@ const ResumeButton = styled(Button)`
   
   &:hover {
     background-color: #15803d;
+  }
+`;
+
+const PauseButton = styled(Button)`
+  background-color: var(--secondary);
+  border: 1px solid var(--border);
+  color: var(--secondary-foreground);
+  flex: 1;
+  
+  &:hover {
+    background-color: var(--muted);
   }
 `;
 
@@ -638,6 +750,34 @@ export function IndividualJobDetailsPage() {
   const currentStageIndex = progressStages.findIndex(stage => stage.status === 'current');
   const currentStage = progressStages[currentStageIndex] || progressStages[0];
 
+  // Pending tasks logic
+  let pendingTasks = [];
+  if (consolidationData) {
+    // Placeholder: derive tasks based on consolidation’s stage (reuse as in consolidation)
+    pendingTasks = [
+      { name: "Generate MBL (Master Bill of Lading)", type: "generate", urgent: true },
+      { name: "Upload Consolidation Invoice", type: "upload", urgent: false },
+      { name: "Generate LCL Manifest", type: "generate", urgent: true },
+      { name: "Complete Customs Entry", type: "upload", urgent: false }
+    ];
+  } else {
+    // Standalone job: placeholder tasks for document uploads etc.
+    pendingTasks = [
+      { name: "Upload Commercial Invoice", type: "upload", urgent: false },
+      { name: "Upload Packing List", type: "upload", urgent: false },
+      { name: "Generate Job Instructions", type: "generate", urgent: false }
+    ];
+  }
+
+  // Placeholder: determine if progress can be advanced (disabled if in consolidation and not all jobs done)
+  let progressDisabled = false;
+  let progressTooltip = "";
+  if (consolidationData) {
+    // Placeholder: disable if not all jobs in consolidation at this stage are complete
+    // This would check actual job statuses in a real app.
+    progressDisabled = true;
+    progressTooltip = "Complete all jobs in this consolidation at the current stage to proceed.";
+  }
   const historyLog = [
     { 
       timestamp: jobData.createdAt || new Date().toISOString(), 
@@ -748,7 +888,7 @@ export function IndividualJobDetailsPage() {
               <SummaryCard>
                 <SummaryCardContent>
                   <SummaryLabel>Current Stage</SummaryLabel>
-                  <SummaryValue>{consolidationData?.id || "Standalone"}</SummaryValue>
+                  <SummaryValue>{consolidationData?.id || "Stage 1 | Booking & Preparation"}</SummaryValue>
                 </SummaryCardContent>
               </SummaryCard>
               
@@ -780,23 +920,79 @@ export function IndividualJobDetailsPage() {
                     <StageDescription>
                       {currentStage?.description}
                     </StageDescription>
-                    
+
+                    {/* Explanatory notice always shown above tasks */}
                     <ExternalNotice>
                       <ExternalText>
-                      {consolidationData
-                         ? `📋 This individual job follows the progress of its parent consolidation ${consolidationData?.id || "Standalone"}. Most actions are managed at the consolidation level.`
-                         : "📋 This is a standalone job. It can be managed independently or added to a consolidation later."}
+                        {consolidationData
+                          ? `📋 This individual job follows the progress of its parent consolidation ${consolidationData?.id || "Standalone"}. Most actions are managed at the consolidation level.`
+                          : "📋 This is a standalone job. It can be managed independently or added to a consolidation later."}
                       </ExternalText>
                     </ExternalNotice>
-                    
+
+                    {/* Tasks Section */}
+                    <TasksSection>
+                      <TasksTitle>Pending Tasks:</TasksTitle>
+                      <TasksGrid>
+                        {pendingTasks.map((task, idx) => (
+                          <TaskCard key={idx}>
+                            <TaskLeft>
+                              <TaskDot $urgent={task.urgent} />
+                              <TaskName>{task.name}</TaskName>
+                              {task.urgent && <UrgentBadge>Urgent</UrgentBadge>}
+                            </TaskLeft>
+                            <TaskActions>
+                              <TaskButton
+                                className={task.type}
+                                variant="outline"
+                                size="sm"
+                              >
+                                {task.type === 'generate' ? (
+                                  <>
+                                    <Settings style={{width: '0.75rem', height: '0.75rem', marginRight: '0.25rem'}} />
+                                    Generate
+                                  </>
+                                ) : (
+                                  <>
+                                    <Upload style={{width: '0.75rem', height: '0.75rem', marginRight: '0.25rem'}} />
+                                    Upload
+                                  </>
+                                )}
+                              </TaskButton>
+                            </TaskActions>
+                          </TaskCard>
+                        ))}
+                      </TasksGrid>
+                    </TasksSection>
+
                     <ActionButtonsContainer>
-                      <ResumeButton>
-                        <Play style={{width: '1rem', height: '1rem', marginRight: '0.5rem'}} />
-                        View Job Progress
-                      </ResumeButton>
-                      <ViewConsolidationButton type="button" variant="outline" onClick={handleBack}>
+                      {consolidationData ? (
+                        <>
+                          <ResumeButton
+                            disabled={progressDisabled}
+                            title={progressDisabled ? progressTooltip : undefined}
+                          >
+                            <Play style={{width: '1rem', height: '1rem', marginRight: '0.5rem'}} />
+                            Resume Progress
+                          </ResumeButton>
+                          <PauseButton variant="outline">
+                            <Pause style={{width: '1rem', height: '1rem', marginRight: '0.5rem'}} />
+                            Job Paused
+                          </PauseButton>
+                        </>
+                      ) : (
+                        <ResumeButton>
+                          <Play style={{width: '1rem', height: '1rem', marginRight: '0.5rem'}} />
+                          Progress Job
+                        </ResumeButton>
+                      )}
+                      <ViewConsolidationButton
+                        type="button"
+                        variant="outline"
+                        onClick={handleBack}
+                      >
                         <ExternalLink style={{width: '1rem', height: '1rem', marginRight: '0.5rem'}} />
-                        View Consolidation
+                        {consolidationData ? "View Consolidation" : "Back to Jobs"}
                       </ViewConsolidationButton>
                     </ActionButtonsContainer>
                   </StageContent>
@@ -894,7 +1090,6 @@ export function IndividualJobDetailsPage() {
                       { name: "Commercial Invoice", status: "Generated", color: "green" },
                       { name: "Packing List", status: "Generated", color: "green" },
                       { name: "Job Instructions", status: "Pending", color: "yellow" },
-                      { name: "Delivery Receipt", status: "Missing", color: "red" }
                     ].map((doc, index) => (
                       <DocumentCard key={index}>
                         <DocumentName>{doc.name}</DocumentName>
@@ -902,9 +1097,13 @@ export function IndividualJobDetailsPage() {
                           <DocumentBadge $color={doc.color}>
                             {doc.status}
                           </DocumentBadge>
-                          {doc.status !== 'Generated' && (
+                          {doc.status !== 'Generated' ? (
                             <DocumentButton variant="outline" size="sm">
                               {doc.status === 'Pending' ? 'Generate' : 'Upload'}
+                            </DocumentButton>
+                          ) : (
+                            <DocumentButton variant="outline" size="sm">
+                              {"View"}
                             </DocumentButton>
                           )}
                         </DocumentActions>

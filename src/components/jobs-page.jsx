@@ -53,8 +53,16 @@ const HeaderContent = styled.div`
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    gap: 0;
+    gap: 1rem;
   }
+`;
+
+const HeaderContentButton = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
 `;
 
 const HeaderText = styled.div`
@@ -561,14 +569,16 @@ export function JobsPage() {
               <Plus  />
               Add New Shipment
             </CreateButton> */}
-            <CreateButton onClick={() => navigate('/create')}>
-              <Plus style={{width: '1rem', height: '1rem', marginRight: '0.5rem'}} />
-              Create Consolidation
-            </CreateButton>
-            <CreateButton onClick={() => navigate('/job/create')}>
-              <Plus style={{width: '1rem', height: '1rem', marginRight: '0.5rem'}} />
-              Create Standalone Job
-            </CreateButton>
+            <HeaderContentButton>
+              <CreateButton onClick={() => navigate('/create')}>
+                <Plus style={{width: '1rem', height: '1rem', marginRight: '0.5rem'}} />
+                Create Consolidation
+              </CreateButton>
+              <CreateButton onClick={() => navigate('/job/create')}>
+                <Plus style={{width: '1rem', height: '1rem', marginRight: '0.5rem'}} />
+                Create Standalone Job
+              </CreateButton>
+            </HeaderContentButton>
           </HeaderContent>
         </Header>
 

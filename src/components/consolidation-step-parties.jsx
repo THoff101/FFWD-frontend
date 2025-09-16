@@ -6,6 +6,21 @@ import { Badge } from "./ui/badge";
 import { Building2, MapPin, User, Users } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 
+// Validation message styled component
+const ValidationMessage = styled.div`
+  color: var(--danger);
+  font-size: 0.75rem;
+  margin-top: 0.1rem;
+  background: #fff;
+  border-radius: 0.25rem;
+  padding: 0.1rem 0.25rem;
+  box-shadow: 0 1px 4px rgba(239, 68, 68, 0.09);
+  position: relative;
+  z-index: 1;
+  white-space: nowrap;
+  width: fit-content;
+`;
+
 // Responsive styled components with mobile-first approach
 const Container = styled.div`
   display: flex;
@@ -280,7 +295,8 @@ const NotifySelectTrigger = styled(SelectTrigger)`
   }
 `;
 
-export function ConsolidationStepParties({ data, updateData }) {
+export function ConsolidationStepParties({ data, updateData, showValidation }) {
+  // showValidation: boolean, triggers showing validation messages when true
   const updatePartyData = (party, field, value) => {
     const currentParty = data[party] || {};
     updateData(party, { ...currentParty, [field]: value });
@@ -293,6 +309,24 @@ export function ConsolidationStepParties({ data, updateData }) {
       [field]: value,
     });
   };
+
+  // Validation logic for required fields
+  const required = {
+    shipper: ["company", "address", "contact", "email"],
+    consignee: ["company", "address", "contact", "email"],
+    origin: ["port", "city", "country"],
+    destination: ["port", "city", "country"],
+  };
+  // Helper to get missing fields, returns { party: { field: true } }
+  const missing = {};
+  Object.entries(required).forEach(([section, fields]) => {
+    missing[section] = {};
+    fields.forEach((field) => {
+      if (!data[section]?.[field] || data[section][field].trim() === "") {
+        missing[section][field] = true;
+      }
+    });
+  });
 
   return (
     <Container>
@@ -335,6 +369,9 @@ export function ConsolidationStepParties({ data, updateData }) {
                   )
                 }
               />
+              {showValidation && missing.shipper.company && (
+                <ValidationMessage>Required</ValidationMessage>
+              )}
             </FieldContainer>
 
             <FieldContainer>
@@ -353,6 +390,9 @@ export function ConsolidationStepParties({ data, updateData }) {
                   )
                 }
               />
+              {showValidation && missing.shipper.address && (
+                <ValidationMessage>Required</ValidationMessage>
+              )}
             </FieldContainer>
 
             <ContactGrid>
@@ -372,6 +412,9 @@ export function ConsolidationStepParties({ data, updateData }) {
                     )
                   }
                 />
+                {showValidation && missing.shipper.contact && (
+                  <ValidationMessage>Required</ValidationMessage>
+                )}
               </FieldContainer>
 
               <FieldContainer>
@@ -391,6 +434,9 @@ export function ConsolidationStepParties({ data, updateData }) {
                     )
                   }
                 />
+                {showValidation && missing.shipper.email && (
+                  <ValidationMessage>Required</ValidationMessage>
+                )}
               </FieldContainer>
             </ContactGrid>
           </StyledCardContent>
@@ -422,6 +468,9 @@ export function ConsolidationStepParties({ data, updateData }) {
                   )
                 }
               />
+              {showValidation && missing.consignee.company && (
+                <ValidationMessage>Required</ValidationMessage>
+              )}
             </FieldContainer>
 
             <FieldContainer>
@@ -440,6 +489,9 @@ export function ConsolidationStepParties({ data, updateData }) {
                   )
                 }
               />
+              {showValidation && missing.consignee.address && (
+                <ValidationMessage>Required</ValidationMessage>
+              )}
             </FieldContainer>
 
             <ContactGrid>
@@ -459,6 +511,9 @@ export function ConsolidationStepParties({ data, updateData }) {
                     )
                   }
                 />
+                {showValidation && missing.consignee.contact && (
+                  <ValidationMessage>Required</ValidationMessage>
+                )}
               </FieldContainer>
 
               <FieldContainer>
@@ -478,6 +533,9 @@ export function ConsolidationStepParties({ data, updateData }) {
                     )
                   }
                 />
+                {showValidation && missing.consignee.email && (
+                  <ValidationMessage>Required</ValidationMessage>
+                )}
               </FieldContainer>
             </ContactGrid>
           </StyledCardContent>
@@ -605,6 +663,9 @@ export function ConsolidationStepParties({ data, updateData }) {
                   )
                 }
               />
+              {showValidation && missing.origin.port && (
+                <ValidationMessage>Required</ValidationMessage>
+              )}
             </FieldContainer>
 
             <LocationGrid>
@@ -624,6 +685,9 @@ export function ConsolidationStepParties({ data, updateData }) {
                     )
                   }
                 />
+                {showValidation && missing.origin.city && (
+                  <ValidationMessage>Required</ValidationMessage>
+                )}
               </FieldContainer>
 
               <FieldContainer>
@@ -642,6 +706,9 @@ export function ConsolidationStepParties({ data, updateData }) {
                     )
                   }
                 />
+                {showValidation && missing.origin.country && (
+                  <ValidationMessage>Required</ValidationMessage>
+                )}
               </FieldContainer>
             </LocationGrid>
           </StyledCardContent>
@@ -673,6 +740,9 @@ export function ConsolidationStepParties({ data, updateData }) {
                   )
                 }
               />
+              {showValidation && missing.destination.port && (
+                <ValidationMessage>Required</ValidationMessage>
+              )}
             </FieldContainer>
 
             <LocationGrid>
@@ -692,6 +762,9 @@ export function ConsolidationStepParties({ data, updateData }) {
                     )
                   }
                 />
+                {showValidation && missing.destination.city && (
+                  <ValidationMessage>Required</ValidationMessage>
+                )}
               </FieldContainer>
 
               <FieldContainer>
@@ -710,6 +783,9 @@ export function ConsolidationStepParties({ data, updateData }) {
                     )
                   }
                 />
+                {showValidation && missing.destination.country && (
+                  <ValidationMessage>Required</ValidationMessage>
+                )}
               </FieldContainer>
             </LocationGrid>
           </StyledCardContent>

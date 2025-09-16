@@ -68,7 +68,7 @@ export function ResponsiveSidebar({
   const navItems = [
     { icon: Home, label: "Dashboard", path: "/" },
     { icon: Briefcase, label: "Jobs", path: "/jobs" },
-    { icon: Package, label: "Consolidations", path: "/jobs" }, // Same as jobs for now
+    // { icon: Package, label: "Consolidations", path: "/jobs" }, // Same as jobs for now
     { icon: Ship, label: "Vessels", path: "/vessels" },
     // { icon: BarChart3, label: "Analytics", path: "/analytics" },
     // { icon: FileText, label: "Documents", path: "/documents" },
@@ -372,7 +372,7 @@ export function ResponsiveSidebar({
         {/* Footer */}
         <div style={footerStyles}>
           <div style={footerActionsStyles}>
-            <p style={footerTextStyles}>FFWD Plus v1.0</p>
+            <p style={footerTextStyles}>FFWD Plus v0.0</p>
             <ThemeToggle />
           </div>
         </div>

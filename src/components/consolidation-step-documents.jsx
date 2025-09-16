@@ -419,11 +419,11 @@ export function ConsolidationStepDocuments({ data, updateData }) {
   const [customDocuments, setCustomDocuments] = useState(data.customDocuments || []);
 
   const consolidationDocuments = [
-    { name: 'MBL (Master Bill of Lading)', canGenerate: true, required: true },
+    { name: 'MBL (Master Bill of Lading)', canGenerate: false, required: true },
     { name: 'LCL Manifest', canGenerate: true, required: true },
     { name: 'Delivery Order LCL', canGenerate: true, required: true },
-    { name: 'Consolidation Invoice', canGenerate: true, required: false },
     { name: 'Customs Entry', canGenerate: false, required: true },
+    { name: 'Consolidation Invoice', canGenerate: true, required: false },
     { name: 'Container Packing List', canGenerate: true, required: false }
   ];
 
