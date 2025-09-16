@@ -466,7 +466,7 @@ export function StickyConsolidationProgress({
                     <ViewJobButton
                       variant="ghost"
                       size="sm"
-                      onClick={() => onJobClick?.(job)}
+                      onClick={() => onJobClick(job.id)}
                     >
                       <ExternalLink style={{ width: '0.75rem', height: '0.75rem' }} />
                     </ViewJobButton>

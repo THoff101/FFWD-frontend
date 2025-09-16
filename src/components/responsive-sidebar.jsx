@@ -69,9 +69,9 @@ export function ResponsiveSidebar({
     { icon: Home, label: "Dashboard", path: "/" },
     { icon: Briefcase, label: "Jobs", path: "/jobs" },
     { icon: Package, label: "Consolidations", path: "/jobs" }, // Same as jobs for now
-    { icon: Ship, label: "Tracking", path: "/tracking" },
-    { icon: BarChart3, label: "Analytics", path: "/analytics" },
-    { icon: FileText, label: "Documents", path: "/documents" },
+    { icon: Ship, label: "Vessels", path: "/vessels" },
+    // { icon: BarChart3, label: "Analytics", path: "/analytics" },
+    // { icon: FileText, label: "Documents", path: "/documents" },
     { icon: Settings, label: "Settings", path: "/settings" },
   ];
 
@@ -317,7 +317,7 @@ export function ResponsiveSidebar({
                 margin: 0,
                 fontWeight: '600'
               }}>
-                FreightForward
+                FFWD
               </h2>
               <p style={{ 
                 fontSize: '0.75rem',
@@ -325,7 +325,7 @@ export function ResponsiveSidebar({
                 margin: 0,
                 opacity: 0.8
               }}>
-                Automation Suite
+                Automation
               </p>
             </div>
           </div>
@@ -372,7 +372,7 @@ export function ResponsiveSidebar({
         {/* Footer */}
         <div style={footerStyles}>
           <div style={footerActionsStyles}>
-            <p style={footerTextStyles}>FreightForward v2.0</p>
+            <p style={footerTextStyles}>FFWD Plus v1.0</p>
             <ThemeToggle />
           </div>
         </div>

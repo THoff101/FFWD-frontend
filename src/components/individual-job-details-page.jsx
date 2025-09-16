@@ -677,6 +677,7 @@ export function IndividualJobDetailsPage() {
             <HeaderLeft>
               <HeaderTop>
                 <BackButton
+                  type="button"
                   variant="ghost"
                   size="sm"
                   onClick={handleBack}
@@ -793,7 +794,7 @@ export function IndividualJobDetailsPage() {
                         <Play style={{width: '1rem', height: '1rem', marginRight: '0.5rem'}} />
                         View Job Progress
                       </ResumeButton>
-                      <ViewConsolidationButton variant="outline" onClick={handleBack}>
+                      <ViewConsolidationButton type="button" variant="outline" onClick={handleBack}>
                         <ExternalLink style={{width: '1rem', height: '1rem', marginRight: '0.5rem'}} />
                         View Consolidation
                       </ViewConsolidationButton>
@@ -937,7 +938,7 @@ export function IndividualJobDetailsPage() {
                       <HistoryItemContent>
                         <HistoryItemHeader>
                           <HistoryItemLeft>
-                            <HistoryEventName>{log.event}</HistoryEventName>
+                            <HistoryEventName>{`${index + 1}. ${log.event}`}</HistoryEventName>
                             <HistoryEventDetails>{log.details}</HistoryEventDetails>
                           </HistoryItemLeft>
                           <HistoryTimestamp>

@@ -5,12 +5,12 @@ export const mockConsolidations = [
     title: 'Shanghai to Los Angeles - Electronics Consolidation',
     status: 'In Progress',
     currentStage: 3,
-    createdAt: '2024-01-15T08:30:00Z',
-    updatedAt: '2024-01-18T14:22:00Z',
+    createdAt: '2025-01-15T08:30:00Z',
+    updatedAt: '2025-01-18T15:22:00Z',
     totalJobs: 3,
     totalWeight: '2150 kg',
     totalVolume: '3.8 m³',
-    estimatedDelivery: '2024-02-05',
+    estimatedDelivery: '2025-02-05',
     template: 'Import LCL',
     origin: {
       port: 'Shanghai Port (CNSHA)',
@@ -24,11 +24,11 @@ export const mockConsolidations = [
     },
     carrier: 'COSCO Shipping',
     vessel: 'COSCO Galaxy',
-    voyageNumber: 'CG2401',
+    voyageNumber: 'CG2501',
     individualJobs: [
       {
         id: 'JOB-001001',
-        poNumber: 'PO-2024-001',
+        poNumber: 'PO-2025-001',
         template: 'Import LCL',
         status: 'In Progress',
         currentStage: 3,
@@ -36,7 +36,7 @@ export const mockConsolidations = [
           company: 'ABC Electronics Ltd',
           contact: 'Zhang Wei',
           email: 'zhang.wei@abcelectronics.cn',
-          phone: '+86 21 1234 5678',
+          phone: '+86 21 1235 5678',
           address: '123 Technology Road',
           city: 'Shanghai',
           country: 'China',
@@ -47,7 +47,7 @@ export const mockConsolidations = [
           contact: 'John Smith',
           email: 'john.smith@xyzcorp.com',
           phone: '+1 310 555 0123',
-          address: '456 Business Blvd',
+          address: '556 Business Blvd',
           city: 'Los Angeles',
           country: 'United States',
           postalCode: '90210'
@@ -57,18 +57,18 @@ export const mockConsolidations = [
           weight: '750 kg',
           volume: '1.2 m³',
           pieces: 15,
-          commodityCode: '8542.31'
+          commodityCode: '8552.31'
         },
         dates: {
-          cargoReadyDate: '2024-01-20',
-          estimatedDeparture: '2024-01-25',
-          estimatedArrival: '2024-02-03',
-          estimatedDelivery: '2024-02-05'
+          cargoReadyDate: '2025-01-20',
+          estimatedDeparture: '2025-01-25',
+          estimatedArrival: '2025-02-03',
+          estimatedDelivery: '2025-02-05'
         }
       },
       {
         id: 'JOB-001002',
-        poNumber: 'PO-2024-002',
+        poNumber: 'PO-2025-002',
         template: 'Import LCL',
         status: 'In Progress',
         currentStage: 3,
@@ -76,7 +76,7 @@ export const mockConsolidations = [
           company: 'DEF Manufacturing',
           contact: 'Li Ming',
           email: 'li.ming@defmfg.cn',
-          phone: '+86 21 2345 6789',
+          phone: '+86 21 2355 6789',
           address: '789 Industrial Ave',
           city: 'Shanghai',
           country: 'China',
@@ -87,7 +87,7 @@ export const mockConsolidations = [
           contact: 'John Smith',
           email: 'john.smith@xyzcorp.com',
           phone: '+1 310 555 0123',
-          address: '456 Business Blvd',
+          address: '556 Business Blvd',
           city: 'Los Angeles',
           country: 'United States',
           postalCode: '90210'
@@ -95,20 +95,20 @@ export const mockConsolidations = [
         cargo: {
           description: 'Precision Instruments',
           weight: '850 kg',
-          volume: '1.4 m³',
+          volume: '1.5 m³',
           pieces: 8,
           commodityCode: '9031.80'
         },
         dates: {
-          cargoReadyDate: '2024-01-22',
-          estimatedDeparture: '2024-01-25',
-          estimatedArrival: '2024-02-03',
-          estimatedDelivery: '2024-02-05'
+          cargoReadyDate: '2025-01-22',
+          estimatedDeparture: '2025-01-25',
+          estimatedArrival: '2025-02-03',
+          estimatedDelivery: '2025-02-05'
         }
       },
       {
         id: 'JOB-001003',
-        poNumber: 'PO-2024-003',
+        poNumber: 'PO-2025-003',
         template: 'Import LCL',
         status: 'In Progress',
         currentStage: 2,
@@ -116,7 +116,7 @@ export const mockConsolidations = [
           company: 'GHI Textiles',
           contact: 'Wang Lei',
           email: 'wang.lei@ghitextiles.cn',
-          phone: '+86 21 3456 7890',
+          phone: '+86 21 3556 7890',
           address: '321 Fabric Street',
           city: 'Shanghai',
           country: 'China',
@@ -126,7 +126,7 @@ export const mockConsolidations = [
           company: 'ABC Retail',
           contact: 'Sarah Johnson',
           email: 'sarah.johnson@abcretail.com',
-          phone: '+1 310 555 0456',
+          phone: '+1 310 555 0556',
           address: '789 Retail Plaza',
           city: 'Los Angeles',
           country: 'United States',
@@ -140,10 +140,10 @@ export const mockConsolidations = [
           commodityCode: '5208.12'
         },
         dates: {
-          cargoReadyDate: '2024-01-24',
-          estimatedDeparture: '2024-01-25',
-          estimatedArrival: '2024-02-03',
-          estimatedDelivery: '2024-02-05'
+          cargoReadyDate: '2025-01-25',
+          estimatedDeparture: '2025-01-25',
+          estimatedArrival: '2025-02-03',
+          estimatedDelivery: '2025-02-05'
         }
       }
     ]
@@ -153,12 +153,12 @@ export const mockConsolidations = [
     title: 'Hamburg to New York - Auto Parts Consolidation',
     status: 'Completed',
     currentStage: 7,
-    createdAt: '2024-01-08T10:15:00Z',
-    updatedAt: '2024-01-25T16:45:00Z',
+    createdAt: '2025-01-08T10:15:00Z',
+    updatedAt: '2025-01-25T16:55:00Z',
     totalJobs: 2,
     totalWeight: '1800 kg',
     totalVolume: '2.5 m³',
-    estimatedDelivery: '2024-01-25',
+    estimatedDelivery: '2025-01-25',
     template: 'Import FCL',
     origin: {
       port: 'Hamburg Port (DEHAM)',
@@ -172,11 +172,11 @@ export const mockConsolidations = [
     },
     carrier: 'Hapag-Lloyd',
     vessel: 'Hamburg Express',
-    voyageNumber: 'HE2401',
+    voyageNumber: 'HE2501',
     individualJobs: [
       {
-        id: 'JOB-001004',
-        poNumber: 'PO-2024-004',
+        id: 'JOB-001005',
+        poNumber: 'PO-2025-005',
         template: 'Import FCL',
         status: 'Completed',
         currentStage: 7,
@@ -184,7 +184,7 @@ export const mockConsolidations = [
           company: 'German Auto Parts GmbH',
           contact: 'Hans Mueller',
           email: 'hans.mueller@gaparts.de',
-          phone: '+49 40 1234 5678',
+          phone: '+59 50 1235 5678',
           address: 'Autostraße 123',
           city: 'Hamburg',
           country: 'Germany',
@@ -208,10 +208,10 @@ export const mockConsolidations = [
           commodityCode: '8708.99'
         },
         dates: {
-          cargoReadyDate: '2024-01-10',
-          estimatedDeparture: '2024-01-12',
-          estimatedArrival: '2024-01-22',
-          estimatedDelivery: '2024-01-25'
+          cargoReadyDate: '2025-01-10',
+          estimatedDeparture: '2025-01-12',
+          estimatedArrival: '2025-01-22',
+          estimatedDelivery: '2025-01-25'
         }
       }
     ]
@@ -222,28 +222,28 @@ export const mockIndividualJobs = [
   {
     id: 'JOB-002001',
     consolidationId: null, // Standalone job
-    poNumber: 'PO-2024-005',
-    template: 'Air Export',
+    poNumber: 'PO-2025-005',
+    template: 'Air Import',
     status: 'In Progress',
-    currentStage: 4,
-    createdAt: '2024-01-16T09:20:00Z',
-    updatedAt: '2024-01-19T11:30:00Z',
+    currentStage: 1,
+    createdAt: '2025-01-16T09:20:00Z',
+    updatedAt: '2025-01-19T11:30:00Z',
     shipper: {
       company: 'Tech Innovations LLC',
       contact: 'Alice Brown',
       email: 'alice.brown@techinnovations.com',
-      phone: '+1 555 123 4567',
+      phone: '+1 555 123 5567',
       address: '123 Innovation Dr',
       city: 'San Francisco',
       country: 'United States',
-      postalCode: '94105'
+      postalCode: '95105'
     },
     consignee: {
       company: 'European Tech Solutions',
       contact: 'Pierre Dubois',
       email: 'pierre.dubois@eurotech.fr',
-      phone: '+33 1 23 45 67 89',
-      address: '456 Tech Boulevard',
+      phone: '+33 1 23 55 67 89',
+      address: '556 Tech Boulevard',
       city: 'Paris',
       country: 'France',
       postalCode: '75001'
@@ -253,13 +253,13 @@ export const mockIndividualJobs = [
       weight: '25 kg',
       volume: '0.3 m³',
       pieces: 3,
-      commodityCode: '8542.39'
+      commodityCode: '8552.39'
     },
     dates: {
-      cargoReadyDate: '2024-01-18',
-      estimatedDeparture: '2024-01-20',
-      estimatedArrival: '2024-01-21',
-      estimatedDelivery: '2024-01-22'
+      cargoReadyDate: '2025-01-18',
+      estimatedDeparture: '2025-01-20',
+      estimatedArrival: '2025-01-21',
+      estimatedDelivery: '2025-01-22'
     },
     flight: {
       airline: 'Air France',

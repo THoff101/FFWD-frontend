@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Package, BarChart3, FileText, Settings, Home, Ship, Menu, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { ThemeToggle } from "./theme-toggle";
+import { useNavigate } from "react-router-dom";
 
 // Responsive styled components with mobile-first approach
 const SidebarOverlay = styled.div`
@@ -219,12 +220,13 @@ const FooterText = styled.p`
 
 export function ModernSidebar({ currentPage = "jobs" }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const navItems = [
     { icon: Home, label: "Dashboard", key: "dashboard" },
     { icon: FileText, label: "Jobs", key: "jobs" },
     { icon: Package, label: "Consolidations", key: "consolidations" },
-    { icon: Ship, label: "Tracking", key: "tracking" },
+    { icon: Ship, label: "Vessels", key: "vessels" },
     { icon: BarChart3, label: "Analytics", key: "analytics" },
     { icon: Settings, label: "Settings", key: "settings" },
   ];
@@ -242,7 +244,7 @@ export function ModernSidebar({ currentPage = "jobs" }) {
     if (window.innerWidth < 768) {
       closeMobileMenu();
     }
-    // Here you could add navigation logic
+    navigate(`/${key}`)
     console.log(`Navigating to: ${key}`);
   };
 
@@ -270,8 +272,8 @@ export function ModernSidebar({ currentPage = "jobs" }) {
               <LogoPackageIcon />
             </LogoIcon>
             <LogoText>
-              <LogoTitle>FreightForward</LogoTitle>
-              <LogoSubtitle>Automation Suite</LogoSubtitle>
+              <LogoTitle>FFWD</LogoTitle>
+              <LogoSubtitle>Automation</LogoSubtitle>
             </LogoText>
           </LogoContainer>
         </LogoSection>
@@ -301,7 +303,7 @@ export function ModernSidebar({ currentPage = "jobs" }) {
         {/* Footer */}
         <FooterSection>
           <FooterActions>
-            <FooterText>FreightForward v2.0</FooterText>
+            <FooterText>FFWD v1.0</FooterText>
             <ThemeToggle />
           </FooterActions>
         </FooterSection>

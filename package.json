@@ -46,6 +46,7 @@
             "sonner": "^2.0.3",
             "styled-components": "*",
             "tailwind-merge": "*",
+            "uuid": "^13.0.0",
             "vaul": "^1.1.2"
       },
       "devDependencies": {

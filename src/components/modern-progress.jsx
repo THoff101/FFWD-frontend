@@ -206,6 +206,7 @@ const TrackingProgressFill = styled.div`
   border-radius: 9999px;
   transition: all 0.5s ease-out;
   width: ${props => props.width};
+  max-width: 100%;
   opacity: 0.8;
 `;
 

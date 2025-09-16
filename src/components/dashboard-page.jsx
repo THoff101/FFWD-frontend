@@ -1,5 +1,40 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import styled from "styled-components";
+// Collapsible group UI for activity groups
+const GroupHeader = styled.div`
+  padding: 0.75rem 1rem;
+  margin: 0;
+  font-size: 1rem;
+  color: var(--foreground);
+  border-bottom: 1px solid var(--border);
+  background-color: var(--card);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: background 0.12s;
+  &:hover {
+    background-color: var(--muted);
+  }
+`;
+
+const GroupContent = styled.div`
+  max-height: 14rem;
+  overflow-y: auto;
+  transition: max-height 0.2s;
+  background: inherit;
+`;
+
+const GroupControls = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem 0.5rem 1rem;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  align-items: center;
+  justify-content: flex-end;
+`;
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
@@ -17,7 +52,8 @@ import {
   Globe,
   Calendar,
   ArrowRight,
-  BarChart3
+  BarChart3,
+  Workflow
 } from "lucide-react";
 // import { mockJobs } from "../data/mock-jobs";
 
@@ -368,8 +404,52 @@ const QuickActionDescription = styled.div`
   line-height: 1.3;
 `;
 
+const FilterBar = styled.div`
+  display: flex;
+  gap: 1rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border-bottom: 1px solid var(--border);
+  background-color: var(--card);
+  flex-wrap: wrap;
+`;
+
+const Input = styled.input`
+  flex: 1;
+  min-width: 150px;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  color: var(--foreground);
+  background-color: var(--background);
+  
+  &:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  }
+`;
+
+const Select = styled.select`
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  color: var(--foreground);
+  background-color: var(--background);
+  
+  &:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  }
+`;
+
 export function DashboardPage() {
   const navigate = useNavigate();
+  const [search, setSearch] = useState("");
+  const [filterType, setFilterType] = useState("all");
+
   const stats = [
     {
       label: "Active Consolidations",
@@ -378,16 +458,16 @@ export function DashboardPage() {
       className: "primary"
     },
     {
-      label: "Completed Jobs",
-      value: "148",
-      icon: CheckCircle,
-      className: "success"
-    },
-    {
       label: "Pending Actions",
       value: "7",
       icon: Clock,
       className: "warning"
+    },
+    {
+      label: "Completed Jobs",
+      value: "42",
+      icon: CheckCircle,
+      className: "success"
     },
     {
       label: "Total Revenue",
@@ -399,7 +479,7 @@ export function DashboardPage() {
 
   const recentActivity = [
     {
-      id: 1,
+      id: 3,
       title: "New consolidation created",
       description: "CONS-789456 for Shanghai → Los Angeles route with 3 individual jobs",
       time: "2 hours ago",
@@ -413,7 +493,7 @@ export function DashboardPage() {
       type: "updated"
     },
     {
-      id: 3,
+      id: 1,
       title: "Document required",
       description: "Commercial Invoice needed for CONS-456789",
       time: "6 hours ago",
@@ -451,16 +531,64 @@ export function DashboardPage() {
       action: () => navigate('/jobs')
     },
     {
-      title: "Analytics Dashboard",
-      description: "View performance metrics and reports",
+      title: "Vessels Table",
+      description: "View current vessels information",
       icon: BarChart3,
       className: "purple",
-      action: () => navigate('/analytics')
+      action: () => navigate('/vessels')
     }
   ];
 
   const formatTime = (timeString) => {
     return timeString;
+  };
+
+  // Filter recentActivity by search and filterType
+  const filteredActivity = recentActivity.filter((activity) => {
+    const matchesSearch = search === "" || 
+      activity.title.toLowerCase().includes(search.toLowerCase()) || 
+      activity.description.toLowerCase().includes(search.toLowerCase());
+    const matchesType = filterType === "all" || activity.type === filterType;
+    return matchesSearch && matchesType;
+  });
+
+  // Group filtered results by type
+  const groupedActivity = filteredActivity.reduce((groups, activity) => {
+    if (!groups[activity.type]) {
+      groups[activity.type] = [];
+    }
+    groups[activity.type].push(activity);
+    return groups;
+  }, {});
+
+  // Map type to display label
+  const typeLabels = {
+    created: "Created",
+    updated: "Updated",
+    alert: "Alerts"
+  };
+
+  // Collapsed state for activity groups
+  const groupKeys = Object.keys(groupedActivity);
+  const [collapsedGroups, setCollapsedGroups] = useState(() =>
+    groupKeys.reduce((acc, key) => ({ ...acc, [key]: false }), {})
+  );
+
+  const toggleGroup = (key) => {
+    setCollapsedGroups((prev) => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+  const collapseAll = () => {
+    setCollapsedGroups(
+      groupKeys.reduce((acc, key) => ({ ...acc, [key]: true }), {})
+    );
+  };
+  const expandAll = () => {
+    setCollapsedGroups(
+      groupKeys.reduce((acc, key) => ({ ...acc, [key]: false }), {})
+    );
   };
 
   return (
@@ -521,20 +649,59 @@ export function DashboardPage() {
                   </RecentActivityTitle>
                 </RecentActivityHeader>
                 <RecentActivityContent>
+                  <FilterBar>
+                    <Input 
+                      type="text" 
+                      placeholder="Search activities..." 
+                      value={search} 
+                      onChange={(e) => setSearch(e.target.value)} 
+                      aria-label="Search activities"
+                    />
+                    <Select 
+                      value={filterType} 
+                      onChange={(e) => setFilterType(e.target.value)}
+                      aria-label="Filter activity type"
+                    >
+                      <option value="all">All Types</option>
+                      <option value="created">Created</option>
+                      <option value="updated">Updated</option>
+                      <option value="alert">Alerts</option>
+                    </Select>
+                  </FilterBar>
+                  <GroupControls>
+                    <Button size="sm" variant="outline" onClick={expandAll}>Expand All</Button>
+                    <Button size="sm" variant="outline" onClick={collapseAll}>Collapse All</Button>
+                  </GroupControls>
                   <ActivityList>
-                    {recentActivity.map((activity) => (
-                      <ActivityItem key={activity.id}>
-                        <ActivityIcon className={activity.type}>
-                          {activity.type === 'created' && <Plus style={{ width: '1rem', height: '1rem' }} />}
-                          {activity.type === 'updated' && <ArrowRight style={{ width: '1rem', height: '1rem' }} />}
-                          {activity.type === 'alert' && <AlertTriangle style={{ width: '1rem', height: '1rem' }} />}
-                        </ActivityIcon>
-                        <ActivityInfo>
-                          <ActivityTitle>{activity.title}</ActivityTitle>
-                          <ActivityDescription>{activity.description}</ActivityDescription>
-                          <ActivityTime>{formatTime(activity.time)}</ActivityTime>
-                        </ActivityInfo>
-                      </ActivityItem>
+                    {Object.entries(groupedActivity).map(([type, activities]) => (
+                      <div key={type}>
+                        <GroupHeader onClick={() => toggleGroup(type)} aria-expanded={!collapsedGroups[type]}>
+                          <span>
+                            {typeLabels[type] || type} ({activities.length})
+                          </span>
+                          <span style={{fontSize: "1.1em", opacity: 0.7}}>
+                            {collapsedGroups[type] ? "▶" : "▼"}
+                          </span>
+                        </GroupHeader>
+                        {!collapsedGroups[type] && (
+                          <GroupContent>
+                            {activities.map((activity) => (
+                              <ActivityItem key={activity.id}>
+                                <ActivityIcon className={activity.type}>
+                                  {activity.type === 'created' && <Plus style={{ width: '1rem', height: '1rem' }} />}
+                                  {activity.type === 'updated' && <ArrowRight style={{ width: '1rem', height: '1rem' }} />}
+                                  {activity.type === 'alert' && <AlertTriangle style={{ width: '1rem', height: '1rem' }} />}
+                                </ActivityIcon>
+                                <ActivityInfo>
+                                  <ActivityTitle>{activity.title}</ActivityTitle>
+                                  <ActivityDescription>{activity.description}</ActivityDescription>
+                                  <ActivityTime>{formatTime(activity.time)}</ActivityTime>
+                                </ActivityInfo>
+                              </ActivityItem>
+                            ))}
+                          </GroupContent>
+                        )}
+                      </div>
                     ))}
                   </ActivityList>
                 </RecentActivityContent>
@@ -544,7 +711,7 @@ export function DashboardPage() {
               <QuickActionsCard>
                 <QuickActionsHeader>
                   <QuickActionsTitle>
-                    <Activity style={{ width: '1.25rem', height: '1.25rem' }} />
+                    <Workflow style={{ width: '1.25rem', height: '1.25rem' }} />
                     Quick Actions
                   </QuickActionsTitle>
                 </QuickActionsHeader>

@@ -74,7 +74,7 @@ export const jobStages = [
       'Deliver to consignee',
       'Obtain delivery confirmation',
       'Generate final invoice',
-      'Complete settlement'
+      'Complete Job'
     ]
   }
 ];

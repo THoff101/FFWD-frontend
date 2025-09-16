@@ -10,6 +10,7 @@ import { ConsolidationProvider } from "./contexts/consolidation-context";
 import { useState } from "react";
 import { JobCreationPage } from "./components/job-creation-page";
 import { JobProvider } from "./contexts/job-context";
+import { VesselsPage } from "./components/vessels-page";
 
 function AppLayout() {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(true);
@@ -50,6 +51,8 @@ function AppLayout() {
           <Route path="/consolidation/:consolidationId/job/:jobId" element={<IndividualJobDetailsPage />} />
 
           <Route path="/job/:jobId" element={<IndividualJobDetailsPage />} />
+
+          <Route path="/vessels" element={<VesselsPage />} />
 
           <Route path="/job/create" element={<JobCreationPage />} />
           {/* Redirect unknown routes to dashboard */}
