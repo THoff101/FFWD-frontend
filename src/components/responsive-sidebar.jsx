@@ -70,7 +70,7 @@ export function ResponsiveSidebar({
     { icon: Briefcase, label: "Jobs", path: "/jobs" },
     // { icon: Package, label: "Consolidations", path: "/jobs" }, // Same as jobs for now
     { icon: Ship, label: "Vessels", path: "/vessels" },
-    // { icon: BarChart3, label: "Analytics", path: "/analytics" },
+    { icon: BarChart3, label: "Tracking", path: "/tracking" },
     // { icon: FileText, label: "Documents", path: "/documents" },
     { icon: Settings, label: "Settings", path: "/settings" },
   ];

@@ -4,9 +4,9 @@ import { mockIndividualJobs, createStandaloneJob, addJobToConsolidation } from "
 const JobContext = createContext();
 
 export function useJobs() {
-  const ctx = useContext(JobContext);
-  if (!ctx) throw new Error("useJobs must be used within JobProvider");
-  return ctx;
+  const context = useContext(JobContext);
+  if (!context) throw new Error("useJobs must be used within JobProvider");
+  return context;
 }
 
 export function JobProvider({ children }) {

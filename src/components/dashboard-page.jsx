@@ -1,7 +1,27 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import styled from "styled-components";
-// Collapsible group UI for activity groups
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
+import { 
+  Plus,
+  Package,
+  Truck,
+  Clock,
+  CheckCircle,
+  AlertTriangle,
+  TrendingUp,
+  Activity,
+  FileText,
+  Users,
+  Globe,
+  Calendar,
+  ArrowRight,
+  BarChart3,
+  Workflow
+} from "lucide-react";
+
 const GroupHeader = styled.div`
   padding: 0.75rem 1rem;
   margin: 0;
@@ -35,29 +55,7 @@ const GroupControls = styled.div`
   align-items: center;
   justify-content: flex-end;
 `;
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
-import { 
-  Plus,
-  Package,
-  Truck,
-  Clock,
-  CheckCircle,
-  AlertTriangle,
-  TrendingUp,
-  Activity,
-  FileText,
-  Users,
-  Globe,
-  Calendar,
-  ArrowRight,
-  BarChart3,
-  Workflow
-} from "lucide-react";
-// import { mockJobs } from "../data/mock-jobs";
 
-// Responsive styled components
 const PageContainer = styled.div`
   min-height: 100vh;
   background-color: var(--background);
@@ -602,16 +600,6 @@ export function DashboardPage() {
                 Here's what's happening with your freight forwarding operations today.
               </WelcomeSubtitle>
             </HeaderLeft>
-            {/* <HeaderActions>
-              <CreateButton onClick={() => navigate('/create')}>
-                <Plus style={{width: '1rem', height: '1rem', marginRight: '0.5rem'}} />
-                New Consolidation
-              </CreateButton>
-              <ViewJobsButton variant="outline" onClick={() => navigate('/jobs')}>
-                <Package style={{width: '1rem', height: '1rem', marginRight: '0.5rem'}} />
-                View Jobs
-              </ViewJobsButton>
-            </HeaderActions> */}
           </HeaderContent>
         </Header>
 

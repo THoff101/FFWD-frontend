@@ -26,7 +26,6 @@ import {
 } from "lucide-react";
 import { toast } from "sonner@2.0.3";
 
-// Styled components with responsive design
 const PageContainer = styled.div`
   min-height: 100vh;
   background-color: var(--background);
@@ -352,9 +351,7 @@ const defaultColumns = [
 ];
 
 export function VesselsPage() {
-  // State management
   const [vessels, setVessels] = useState([]);
-  // Load initial vessels from mockVessels on mount
   useEffect(() => {
     setVessels([...mockVessels]);
   }, []);

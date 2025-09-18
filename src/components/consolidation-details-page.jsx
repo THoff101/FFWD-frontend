@@ -22,7 +22,6 @@ import {
 } from "lucide-react";
 import { jobStages } from "../data/job-stages";
 
-// Responsive styled components with mobile-first approach
 const PageContainer = styled.div`
   min-height: 100vh;
   background-color: var(--background);

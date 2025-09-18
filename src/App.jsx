@@ -11,6 +11,7 @@ import { useState } from "react";
 import { JobCreationPage } from "./components/job-creation-page";
 import { JobProvider } from "./contexts/job-context";
 import { VesselsPage } from "./components/vessels-page";
+import { MyShipTracking } from "./components/my-ship-tracking";
 
 function AppLayout() {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(true);
@@ -31,8 +32,8 @@ function AppLayout() {
       {/* Main Content */}
       <main style={{
         flex: 1,
-        minWidth: 0, // Prevents flex item from overflowing
-        marginLeft: 0 // Reset margin, sidebar handles positioning
+        minWidth: 0,
+        marginLeft: 0
       }}>
         <Routes>
           {/* Dashboard Route */}
@@ -55,6 +56,10 @@ function AppLayout() {
           <Route path="/vessels" element={<VesselsPage />} />
 
           <Route path="/job/create" element={<JobCreationPage />} />
+
+          {/* Vessel Tracking */}
+          <Route path="/tracking" element={<MyShipTracking />} />
+
           {/* Redirect unknown routes to dashboard */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
@@ -68,7 +73,7 @@ export default function App() {
     <ThemeProvider>
       <ConsolidationProvider>
         <JobProvider>
-          <Router>
+          <Router basename="/FFWD-frontend">
             <AppLayout />
           </Router>
         </JobProvider>

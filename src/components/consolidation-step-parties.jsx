@@ -6,7 +6,6 @@ import { Badge } from "./ui/badge";
 import { Building2, MapPin, User, Users } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 
-// Validation message styled component
 const ValidationMessage = styled.div`
   color: var(--danger);
   font-size: 0.75rem;
@@ -21,7 +20,6 @@ const ValidationMessage = styled.div`
   width: fit-content;
 `;
 
-// Responsive styled components with mobile-first approach
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -310,14 +308,13 @@ export function ConsolidationStepParties({ data, updateData, showValidation }) {
     });
   };
 
-  // Validation logic for required fields
   const required = {
     shipper: ["company", "address", "contact", "email"],
     consignee: ["company", "address", "contact", "email"],
     origin: ["port", "city", "country"],
     destination: ["port", "city", "country"],
   };
-  // Helper to get missing fields, returns { party: { field: true } }
+
   const missing = {};
   Object.entries(required).forEach(([section, fields]) => {
     missing[section] = {};

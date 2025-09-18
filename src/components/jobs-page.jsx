@@ -23,7 +23,6 @@ import {
 } from "lucide-react";
 import { fetchConsolidations, mockIndividualJobs } from "../data/mock-jobs";
 
-// Responsive styled components with mobile-first approach
 const PageContainer = styled.div`
   min-height: 100vh;
   background-color: var(--background);

@@ -9,7 +9,6 @@ import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { Calendar, FileText, Plus, Settings, Upload, CalendarIcon } from "lucide-react";
 
-// Responsive styled components with mobile-first approach
 const Container = styled.div`
   display: flex;
   flex-direction: column;
