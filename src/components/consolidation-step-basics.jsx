@@ -9,7 +9,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Package, AlertTriangle } from "lucide-react";
 import { shipmentTemplates } from "../data/shipment-templates";
 
-// Responsive styled components with mobile-first approach
 const Container = styled.div`
   display: flex;
   flex-direction: column;

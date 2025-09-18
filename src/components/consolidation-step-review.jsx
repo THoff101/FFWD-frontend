@@ -6,7 +6,6 @@ import { Button } from "./ui/button";
 import { Upload, FileText, Play, ChevronLeft, CheckCircle2 } from "lucide-react";
 import { TrackingProgress } from "./modern-progress";
 
-// Responsive styled components with mobile-first approach
 const Container = styled.div`
   display: flex;
   flex-direction: column;

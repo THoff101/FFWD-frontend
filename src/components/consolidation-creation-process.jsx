@@ -10,7 +10,6 @@ import { ConsolidationStepReview } from "./consolidation-step-review";
 import { Button } from "./ui/button";
 import { ChevronLeft, ChevronRight, ArrowLeft, Loader2 } from "lucide-react";
 
-// Responsive styled components with mobile-first approach
 const PageContainer = styled.div`
   min-height: 100vh;
   background-color: var(--background);

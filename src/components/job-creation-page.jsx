@@ -150,7 +150,6 @@ export function JobCreationPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // You might want to handle file uploads here before creating job
       const newJob = await createJob(form);
       navigate(`/job/${newJob.id}`);
     } catch (err) {

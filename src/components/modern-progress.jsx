@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { Check, Clock, AlertCircle } from "lucide-react";
 
-// Responsive styled components with mobile-first approach
 const ProgressContainer = styled.div`
   width: 100%;
   background-color: var(--card);
@@ -167,7 +166,6 @@ const StepLabel = styled.p`
   font-weight: ${props => props.$status === 'current' ? '600' : '400'};
 `;
 
-// Tracking Progress Components (for job details pages)
 const TrackingContainer = styled.div`
   background-color: var(--card);
   border-radius: 0.75rem;

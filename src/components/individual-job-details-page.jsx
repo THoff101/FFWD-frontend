@@ -21,6 +21,9 @@ import {
   History,
   ExternalLink
 } from "lucide-react";
+import { jobStages } from "../data/job-stages";
+
+
 // --- Tasks Section styles (mirroring consolidation) ---
 const TasksSection = styled.div`
   display: flex;
@@ -121,9 +124,7 @@ const TaskButton = styled(Button)`
     }
   }
 `;
-import { jobStages } from "../data/job-stages";
 
-// Responsive styled components with mobile-first approach
 const PageContainer = styled.div`
   min-height: 100vh;
   background-color: var(--background);

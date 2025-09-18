@@ -44,7 +44,6 @@ export function ConsolidationProvider({ children }) {
       updatedAt: new Date().toISOString(),
       origin: data.origin, // propagate from data
       destination: data.destination, // propagate from data
-      // Optionally, you could add individualJobs here if needed
     };
     setConsolidations(prev => {
       const newMap = new Map(prev);

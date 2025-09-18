@@ -5,7 +5,6 @@ import { Button } from "./ui/button";
 import { ThemeToggle } from "./theme-toggle";
 import { useNavigate } from "react-router-dom";
 
-// Responsive styled components with mobile-first approach
 const SidebarOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -240,7 +239,6 @@ export function ModernSidebar({ currentPage = "jobs" }) {
   };
 
   const handleNavClick = (key) => {
-    // Close mobile menu when nav item is clicked
     if (window.innerWidth < 768) {
       closeMobileMenu();
     }
